@@ -180,7 +180,7 @@ export default function DoctorDirectoryPage() {
 
         {/* Doctors Grid */}
         {loading ? (
-          <LoadingSpinner message="Searching real-time doctor schedules from MySQL..." />
+          <LoadingSpinner message="Searching real-time doctor schedules..." />
         ) : doctors.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: '60px 20px' }}>
             <Stethoscope size={48} color="var(--slate-300)" style={{ margin: '0 auto 16px' }} />

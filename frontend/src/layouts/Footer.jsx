@@ -31,14 +31,6 @@ export default function Footer() {
               Smart Doctor Appointment & Queue System designed to streamline outpatient scheduling,
               eliminate crowded waiting rooms, and give patients live queue transparency.
             </p>
-
-            <div className="footer-tech-stack">
-              <span>React.js</span>
-              <span className="dot">•</span>
-              <span>Express.js</span>
-              <span className="dot">•</span>
-              <span>MySQL</span>
-            </div>
           </div>
 
           {/* Column 2: Navigation Links */}
