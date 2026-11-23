@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { Stethoscope, Plus, Edit2, Power, UserCheck, Shield, CheckCircle, Search } from 'lucide-react';
+import { Stethoscope, Plus, Edit2, Power, UserCheck, Shield, CheckCircle, Search, Eye, EyeOff } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Alert from '../../components/common/Alert';
@@ -14,6 +14,7 @@ export default function ManageDoctorsPage() {
 
   // Add Doctor Modal
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [showAddDoctorPassword, setShowAddDoctorPassword] = useState(false);
   const [addForm, setAddForm] = useState({
     name: '',
     email: '',
@@ -253,7 +254,9 @@ export default function ManageDoctorsPage() {
         <form onSubmit={handleCreateSubmit}>
           <div className="register-form-grid" style={{ gap: '16px' }}>
             <div className="form-group">
-              <label className="form-label">Doctor Name *</label>
+              <label className="form-label">
+                Doctor Name <span className="required-star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -265,7 +268,9 @@ export default function ManageDoctorsPage() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Login Email Address *</label>
+              <label className="form-label">
+                Login Email Address <span className="required-star">*</span>
+              </label>
               <input
                 type="email"
                 className="form-control"
@@ -277,7 +282,9 @@ export default function ManageDoctorsPage() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Phone Number *</label>
+              <label className="form-label">
+                Phone Number <span className="required-star">*</span>
+              </label>
               <input
                 type="tel"
                 className="form-control"
@@ -289,18 +296,34 @@ export default function ManageDoctorsPage() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Default Password *</label>
-              <input
-                type="password"
-                className="form-control"
-                value={addForm.password}
-                onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
-                required
-              />
+              <label className="form-label">
+                Default Password <span className="required-star">*</span>
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showAddDoctorPassword ? 'text' : 'password'}
+                  className="form-control"
+                  style={{ paddingRight: '40px' }}
+                  value={addForm.password}
+                  onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowAddDoctorPassword((prev) => !prev)}
+                  aria-label={showAddDoctorPassword ? 'Hide password' : 'Show password'}
+                  tabIndex={-1}
+                >
+                  {showAddDoctorPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Specialization *</label>
+              <label className="form-label">
+                Specialization <span className="required-star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -312,7 +335,9 @@ export default function ManageDoctorsPage() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Qualification *</label>
+              <label className="form-label">
+                Qualification <span className="required-star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"

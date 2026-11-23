@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Activity, Lock, Mail, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
+import { Activity, Lock, Mail, ArrowRight, ShieldCheck, UserCheck, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Alert from '../../components/common/Alert';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -20,20 +22,41 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
-      setError('Please provide both email and password.');
+    const errs = {};
+    if (!email.trim()) {
+      errs.email = 'Please enter your registered email address.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errs.email = 'Please enter a valid email address.';
+    }
+
+    if (!password) {
+      errs.password = 'Please enter your account password.';
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
       return;
     }
 
+    setFieldErrors({});
     setLoading(true);
+
     try {
-      const loggedInUser = await login(email, password);
+      const loggedInUser = await login(email.trim(), password);
       if (loggedInUser.role === 'patient') navigate('/patient/dashboard');
       else if (loggedInUser.role === 'doctor') navigate('/doctor/dashboard');
       else if (loggedInUser.role === 'admin') navigate('/admin/dashboard');
       else navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Login failed. Please check your credentials.');
+      const serverMsg = err.response?.data?.message || err.message || 'Login failed. Please check your credentials.';
+      setError(serverMsg);
+
+      if (serverMsg.toLowerCase().includes('password') || serverMsg.toLowerCase().includes('credential')) {
+        setFieldErrors({
+          email: 'Check this email address',
+          password: 'Or check this password',
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -44,6 +67,7 @@ export default function LoginPage() {
     setEmail(demoEmail);
     setPassword(demoPass);
     setError('');
+    setFieldErrors({});
   };
 
   return (
@@ -79,48 +103,79 @@ export default function LoginPage() {
 
           {error && <Alert type="danger" message={error} onClose={() => setError('')} />}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <div className="form-group">
-              <label className="form-label">Email Address</label>
+              <label className="form-label">
+                Email Address <span className="required-star">*</span>
+              </label>
               <div style={{ position: 'relative' }}>
                 <Mail
                   size={18}
-                  color="var(--slate-400)"
+                  color={fieldErrors.email ? '#ef4444' : 'var(--slate-400)'}
                   style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }}
                 />
                 <input
                   type="email"
-                  className="form-control"
+                  className={`form-control ${fieldErrors.email ? 'is-invalid' : ''}`}
                   placeholder="name@example.com"
                   style={{ paddingLeft: '38px' }}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: '' }));
+                  }}
                   required
                 />
               </div>
+              {fieldErrors.email && (
+                <div className="field-error-message">
+                  <AlertCircle size={14} />
+                  <span>{fieldErrors.email}</span>
+                </div>
+              )}
             </div>
 
             <div className="form-group" style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <label className="form-label" style={{ marginBottom: 0 }}>Password</label>
+                <label className="form-label" style={{ marginBottom: 0 }}>
+                  Password <span className="required-star">*</span>
+                </label>
                 <span style={{ fontSize: '0.8rem', color: 'var(--slate-400)' }}>Demo: password123</span>
               </div>
               <div style={{ position: 'relative' }}>
                 <Lock
                   size={18}
-                  color="var(--slate-400)"
+                  color={fieldErrors.password ? '#ef4444' : 'var(--slate-400)'}
                   style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }}
                 />
                 <input
-                  type="password"
-                  className="form-control"
+                  type={showPassword ? 'text' : 'password'}
+                  className={`form-control ${fieldErrors.password ? 'is-invalid' : ''}`}
                   placeholder="Enter your password"
-                  style={{ paddingLeft: '38px' }}
+                  style={{ paddingLeft: '38px', paddingRight: '40px' }}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: '' }));
+                  }}
                   required
                 />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
+              {fieldErrors.password && (
+                <div className="field-error-message">
+                  <AlertCircle size={14} />
+                  <span>{fieldErrors.password}</span>
+                </div>
+              )}
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px' }} disabled={loading}>
