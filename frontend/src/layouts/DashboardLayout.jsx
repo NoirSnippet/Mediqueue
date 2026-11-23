@@ -102,7 +102,9 @@ export default function DashboardLayout() {
         </aside>
 
         <main className="dashboard-main">
-          <Outlet />
+          <div className="dashboard-content-container">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
