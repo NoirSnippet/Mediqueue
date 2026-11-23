@@ -170,6 +170,10 @@ export default function DoctorAppointmentsPage() {
           </p>
         ) : (
           <div className="table-responsive">
+            <div className="mobile-table-hint">
+              <span>Doctor Appointments</span>
+              <span>👉 Swipe table to view all columns</span>
+            </div>
             <table className="table">
               <thead>
                 <tr>

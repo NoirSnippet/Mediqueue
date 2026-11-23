@@ -109,6 +109,10 @@ export default function ManagePatientsPage() {
           </p>
         ) : (
           <div className="table-responsive">
+            <div className="mobile-table-hint">
+              <span>Patient Directory</span>
+              <span>👉 Swipe table to view all columns</span>
+            </div>
             <table className="table">
               <thead>
                 <tr>

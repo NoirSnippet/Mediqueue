@@ -114,8 +114,8 @@ export default function ManageAppointmentsPage() {
       {error && <Alert type="danger" message={error} onClose={() => setError('')} />}
 
       {/* Filter Matrix */}
-      <div className="card" style={{ marginBottom: '24px', padding: '18px 22px' }}>
-        <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="card" style={{ marginBottom: '24px' }}>
+        <form onSubmit={handleSearchSubmit} className="table-filter-form">
           <div style={{ flex: '2', minWidth: '220px', position: 'relative' }}>
             <Search size={18} color="var(--slate-400)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
             <input
@@ -203,6 +203,10 @@ export default function ManageAppointmentsPage() {
           </p>
         ) : (
           <div className="table-responsive">
+            <div className="mobile-table-hint">
+              <span>Full Appointments Registry</span>
+              <span>👉 Swipe table to view all 7 columns</span>
+            </div>
             <table className="table">
               <thead>
                 <tr>

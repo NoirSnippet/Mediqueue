@@ -664,6 +664,8 @@ button, input, select, textarea {
   margin-bottom: 20px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--slate-100);
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .card-title {
@@ -842,16 +844,44 @@ button, input, select, textarea {
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: var(--radius-md);
   border: 1px solid var(--slate-200);
+  background-color: #ffffff;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: var(--slate-100);
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: var(--slate-300);
+  border-radius: var(--radius-full);
 }
 
 .table {
   width: 100%;
+  min-width: 680px;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.925rem;
   background-color: #ffffff;
+}
+
+.mobile-table-hint {
+  display: none;
+}
+
+.table-filter-form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
 }
 
 .table th {
@@ -1846,6 +1876,43 @@ button, input, select, textarea {
 
   .dashboard-main {
     padding: 16px 10px !important;
+  }
+
+  .card-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .card-header .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .mobile-table-hint {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    font-size: 0.725rem !important;
+    color: var(--primary-700) !important;
+    font-weight: 600 !important;
+    padding: 6px 12px !important;
+    background-color: var(--primary-50) !important;
+    border-bottom: 1px solid var(--slate-200) !important;
+  }
+
+  .table-filter-form > div {
+    width: 100% !important;
+    min-width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+
+  .table-filter-form > button {
+    flex: 1 1 calc(50% - 6px) !important;
+    justify-content: center !important;
   }
 
   .dashboard-header-actions {

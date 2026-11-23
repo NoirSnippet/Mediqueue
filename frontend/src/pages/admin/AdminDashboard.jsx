@@ -153,6 +153,10 @@ export default function AdminDashboard() {
           </p>
         ) : (
           <div className="table-responsive">
+            <div className="mobile-table-hint">
+              <span>Appointment Log</span>
+              <span>👉 Swipe table to view all 7 columns</span>
+            </div>
             <table className="table">
               <thead>
                 <tr>

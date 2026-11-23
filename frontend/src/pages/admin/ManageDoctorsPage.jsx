@@ -162,6 +162,10 @@ export default function ManageDoctorsPage() {
           <p style={{ textAlign: 'center', color: 'var(--slate-400)', padding: '30px' }}>No doctors found.</p>
         ) : (
           <div className="table-responsive">
+            <div className="mobile-table-hint">
+              <span>Doctor Roster</span>
+              <span>👉 Swipe table to view all columns</span>
+            </div>
             <table className="table">
               <thead>
                 <tr>
