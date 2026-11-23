@@ -128,6 +128,35 @@ async function runGroupRBAC() {
   console.log('  PASS: GET /api/queue/patient/live protected');
 }
 
+async function runGroupContact() {
+  console.log('\nTesting contact routes...');
+
+  const invalidRes = await simulateRequest({
+    method: 'POST',
+    url: '/api/contact',
+    body: { name: 'Test' },
+  });
+  assert.strictEqual(invalidRes.statusCode, 400);
+  assert.strictEqual(invalidRes.body.success, false);
+  console.log('  PASS: POST /api/contact validates payload');
+
+  const validRes = await simulateRequest({
+    method: 'POST',
+    url: '/api/contact',
+    body: {
+      name: 'Priya Sharma',
+      email: 'priya@example.com',
+      phone: '+91 98765 43210',
+      department: 'General Inquiry',
+      message: 'Inquiring about Saturday OPD clinic timing.',
+    },
+  });
+  assert.strictEqual(validRes.statusCode, 201);
+  assert.strictEqual(validRes.body.success, true);
+  assert.ok(validRes.body.ticket && validRes.body.ticket.ticketId.startsWith('MQ-TKT-'));
+  console.log('  PASS: POST /api/contact issues ticket reference');
+}
+
 async function run() {
   console.log(`\nRunning integration tests (${targetGroup})...\n`);
 
@@ -141,6 +170,10 @@ async function run() {
 
   if (targetGroup === 'rbac' || targetGroup === 'all') {
     await runGroupRBAC();
+  }
+
+  if (targetGroup === 'contact' || targetGroup === 'all') {
+    await runGroupContact();
   }
 
   console.log('\nIntegration tests completed successfully!\n');
