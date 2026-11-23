@@ -40,6 +40,14 @@ export default function HomePage() {
     fetchTopDoctors();
   }, []);
 
+  const handleScrollToExplore = (e) => {
+    e.preventDefault();
+    const target = document.getElementById('how-it-works');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div>
       {/* hero section */}
@@ -87,9 +95,14 @@ export default function HomePage() {
         </div>
 
         {/* Scroll Cue: Informs user more details are below */}
-        <a href="#how-it-works" className="hero-scroll-cue" aria-label="Scroll to learn how it works">
-          <span>Explore</span>
-          <ChevronDown size={16} />
+        <a
+          href="#how-it-works"
+          onClick={handleScrollToExplore}
+          className="hero-scroll-cue"
+          aria-label="Scroll to learn how it works"
+        >
+          <span>Explore How It Works</span>
+          <ChevronDown size={15} />
         </a>
       </section>
 

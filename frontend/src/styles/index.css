@@ -61,6 +61,14 @@
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+#how-it-works {
+  scroll-margin-top: 80px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -1739,6 +1747,34 @@ button, input, select, textarea {
   .footer-inner {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+
+  /* Fix Explore scroll cue on tablets & mobile: prevent absolute overlay/bouncing popup behavior */
+  .hero-scroll-cue {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin: 22px auto 0 !important;
+    padding: 8px 18px !important;
+    background: #ffffff !important;
+    border: 1px solid var(--slate-200) !important;
+    border-radius: var(--radius-full) !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08) !important;
+    color: var(--primary-700) !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    font-size: 0.8rem !important;
+    width: fit-content !important;
+    animation: none !important;
+    cursor: pointer !important;
+  }
+
+  .hero-scroll-cue:hover,
+  .hero-scroll-cue:active {
+    background: var(--primary-50) !important;
+    border-color: var(--primary-300) !important;
+    color: var(--primary-800) !important;
   }
 }
 
