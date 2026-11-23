@@ -107,10 +107,12 @@ export default function DoctorSchedulePage() {
           </p>
         </div>
 
-        <button onClick={openAddModal} className="btn btn-primary">
-          <Plus size={18} />
-          Add / Update Day
-        </button>
+        <div className="dashboard-header-actions">
+          <button onClick={openAddModal} className="btn btn-primary">
+            <Plus size={18} />
+            Add / Update Day
+          </button>
+        </div>
       </div>
 
       {message && <Alert type="success" message={message} onClose={() => setMessage('')} />}
@@ -132,7 +134,11 @@ export default function DoctorSchedulePage() {
             <p>No working schedules registered. Click "Add / Update Day" to set your hours.</p>
           </div>
         ) : (
-          <div className="table-responsive">
+          <>
+            <div className="mobile-table-hint">
+              👉 Swipe table horizontally to view all schedule columns
+            </div>
+            <div className="table-responsive">
             <table className="table">
               <thead>
                 <tr>
@@ -189,7 +195,8 @@ export default function DoctorSchedulePage() {
               </tbody>
             </table>
           </div>
-        )}
+        </>
+      )}
       </div>
 
       {/* Add / Edit Schedule Modal */}

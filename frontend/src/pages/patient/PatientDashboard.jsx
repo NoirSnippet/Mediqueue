@@ -64,34 +64,22 @@ export default function PatientDashboard() {
           </p>
         </div>
 
-        <Link to="/patient/book" className="btn btn-primary">
-          <PlusCircle size={18} />
-          Book Appointment
-        </Link>
+        <div className="dashboard-header-actions">
+          <Link to="/patient/book" className="btn btn-primary">
+            <PlusCircle size={18} />
+            Book Appointment
+          </Link>
+        </div>
       </div>
 
       {/* Live Queue Banner for Today (if patient has a consultation today) */}
       {liveQueue && (
-        <div
-          style={{
-            background: 'linear-gradient(135deg, #0369a1, #0d9488)',
-            color: 'white',
-            borderRadius: 'var(--radius-xl)',
-            padding: '24px',
-            marginBottom: '28px',
-            boxShadow: 'var(--shadow-md)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '20px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div className="patient-live-queue-banner">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', minWidth: 0, flex: 1 }}>
             <div
               style={{
-                width: '64px',
-                height: '64px',
+                width: '56px',
+                height: '56px',
                 borderRadius: 'var(--radius-lg)',
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 display: 'flex',
@@ -99,15 +87,16 @@ export default function PatientDashboard() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 800,
-                fontSize: '1.5rem',
+                fontSize: '1.4rem',
+                flexShrink: 0,
               }}
             >
               <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.9 }}>Token</span>
               <span>#{liveQueue.queue_number}</span>
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '1.2rem', fontWeight: 700 }}>Today's Live Queue</span>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '1.15rem', fontWeight: 700 }}>Today's Live Queue</span>
                 <span
                   style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.25)',
@@ -120,10 +109,10 @@ export default function PatientDashboard() {
                   {liveQueue.queue_status}
                 </span>
               </div>
-              <p style={{ fontSize: '0.95rem', opacity: 0.95 }}>
+              <p style={{ fontSize: '0.9rem', opacity: 0.95, wordBreak: 'break-word', margin: 0 }}>
                 {liveQueue.statusMessage}
               </p>
-              <div style={{ fontSize: '0.85rem', opacity: 0.85, marginTop: '4px' }}>
+              <div style={{ fontSize: '0.825rem', opacity: 0.85, marginTop: '4px', wordBreak: 'break-word' }}>
                 Dr. {liveQueue.doctor_name} ({liveQueue.specialization}) • {liveQueue.room_number} • Time: {liveQueue.appointment_time}
               </div>
             </div>
@@ -132,7 +121,7 @@ export default function PatientDashboard() {
           <Link
             to="/patient/queue"
             className="btn"
-            style={{ backgroundColor: 'white', color: 'var(--primary-700)', fontWeight: 700 }}
+            style={{ backgroundColor: 'white', color: 'var(--primary-700)', fontWeight: 700, whiteSpace: 'nowrap' }}
           >
             <Clock size={16} />
             Open Queue Tracker
@@ -177,23 +166,12 @@ export default function PatientDashboard() {
 
           {stats?.nextAppointment ? (
             <div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '16px',
-                  backgroundColor: 'var(--slate-50)',
-                  borderRadius: 'var(--radius-lg)',
-                  border: '1px solid var(--slate-200)',
-                  marginBottom: '18px',
-                }}
-              >
-                <div>
+              <div className="patient-next-appt-box">
+                <div style={{ minWidth: 0, flex: 1 }}>
                   <div style={{ fontSize: '0.8rem', color: 'var(--slate-500)', marginBottom: '4px' }}>
                     Reference: <strong>{stats.nextAppointment.appointment_reference}</strong>
                   </div>
-                  <h4 style={{ fontSize: '1.2rem', color: 'var(--slate-900)' }}>
+                  <h4 style={{ fontSize: '1.2rem', color: 'var(--slate-900)', marginBottom: '2px' }}>
                     Dr. {stats.nextAppointment.doctor_name}
                   </h4>
                   <div style={{ color: 'var(--primary-700)', fontWeight: 600, fontSize: '0.875rem' }}>
@@ -204,12 +182,12 @@ export default function PatientDashboard() {
                   </div>
                 </div>
 
-                <div style={{ textAlign: 'right' }}>
+                <div className="next-appt-meta" style={{ textAlign: 'right' }}>
                   <Badge status={stats.nextAppointment.appointment_status} />
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--slate-900)', marginTop: '8px' }}>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--slate-900)', marginTop: '6px' }}>
                     {stats.nextAppointment.appointment_date}
                   </div>
-                  <div style={{ fontSize: '0.9rem', color: 'var(--slate-600)' }}>
+                  <div style={{ fontSize: '0.875rem', color: 'var(--slate-600)' }}>
                     {stats.nextAppointment.appointment_time}
                   </div>
                   {stats.nextAppointment.queue_number && (
@@ -220,7 +198,7 @@ export default function PatientDashboard() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <div className="patient-appt-actions">
                 <Link to="/patient/appointments" className="btn btn-secondary btn-sm">
                   Manage Booking
                 </Link>

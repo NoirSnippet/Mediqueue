@@ -217,7 +217,7 @@ export default function PatientProfilePage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+          <div className="dashboard-header-actions" style={{ marginTop: '14px' }}>
             <button type="submit" className="btn btn-primary" disabled={saving}>
               {saving ? 'Saving Changes...' : 'Save Profile Information'}
             </button>

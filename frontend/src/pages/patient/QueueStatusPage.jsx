@@ -62,15 +62,17 @@ export default function QueueStatusPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => fetchLiveQueue(true)}
-          className="btn btn-secondary btn-sm"
-          disabled={refreshing}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
-          <span>{refreshing ? 'Refreshing...' : 'Refresh Status'}</span>
-        </button>
+        <div className="dashboard-header-actions">
+          <button
+            onClick={() => fetchLiveQueue(true)}
+            className="btn btn-secondary btn-sm"
+            disabled={refreshing}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+            <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+            <span>{refreshing ? 'Refreshing...' : 'Refresh Status'}</span>
+          </button>
+        </div>
       </div>
 
       {!queueData ? (

@@ -352,10 +352,7 @@ export default function BookAppointmentPage() {
         </div>
 
         {/* Action Button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '14px' }}>
-          <Link to="/patient/dashboard" className="btn btn-secondary">
-            Cancel
-          </Link>
+        <div className="dashboard-header-actions" style={{ marginTop: '20px' }}>
           <button
             type="submit"
             className="btn btn-primary btn-lg"
@@ -363,6 +360,9 @@ export default function BookAppointmentPage() {
           >
             {bookingLoading ? 'Securing Slot & Queue Token...' : 'Confirm Appointment Booking'}
           </button>
+          <Link to="/patient/dashboard" className="btn btn-secondary">
+            Cancel
+          </Link>
         </div>
       </form>
 
@@ -454,11 +454,11 @@ export default function BookAppointmentPage() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <Link to="/patient/appointments" className="btn btn-secondary">
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link to="/patient/appointments" className="btn btn-secondary" style={{ flex: '1 1 180px', justifyContent: 'center' }}>
                 View My Appointments
               </Link>
-              <Link to="/patient/queue" className="btn btn-primary">
+              <Link to="/patient/queue" className="btn btn-primary" style={{ flex: '1 1 180px', justifyContent: 'center' }}>
                 Open Live Queue Tracker
               </Link>
             </div>

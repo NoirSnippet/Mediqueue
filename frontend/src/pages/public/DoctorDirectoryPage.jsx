@@ -206,8 +206,8 @@ export default function DoctorDirectoryPage() {
                   />
 
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <h3 style={{ fontSize: '1.2rem', color: 'var(--slate-900)' }}>{doc.doctor_name}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px', flexWrap: 'wrap', gap: '6px' }}>
+                      <h3 style={{ fontSize: '1.15rem', color: 'var(--slate-900)' }}>{doc.doctor_name}</h3>
                       <Badge status={doc.availability_status} />
                     </div>
                     <div style={{ color: 'var(--primary-700)', fontWeight: 700, fontSize: '0.9rem', marginBottom: '2px' }}>

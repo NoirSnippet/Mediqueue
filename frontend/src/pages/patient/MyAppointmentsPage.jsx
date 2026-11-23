@@ -85,10 +85,12 @@ export default function MyAppointmentsPage() {
           </p>
         </div>
 
-        <Link to="/patient/book" className="btn btn-primary">
-          <PlusCircle size={18} />
-          Book New Slot
-        </Link>
+        <div className="dashboard-header-actions">
+          <Link to="/patient/book" className="btn btn-primary">
+            <PlusCircle size={18} />
+            Book New Slot
+          </Link>
+        </div>
       </div>
 
       {successMessage && <Alert type="success" message={successMessage} onClose={() => setSuccessMessage('')} />}
@@ -142,22 +144,14 @@ export default function MyAppointmentsPage() {
             return (
               <div
                 key={appt.id}
-                className="card card-hover"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '20px',
-                  padding: '20px 24px',
-                }}
+                className="card card-hover patient-appt-card"
               >
                 {/* Doctor and Clinic Info */}
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center', minWidth: '260px' }}>
+                <div className="patient-appt-doc-info">
                   <div
                     style={{
-                      width: '52px',
-                      height: '52px',
+                      width: '50px',
+                      height: '50px',
                       borderRadius: 'var(--radius-md)',
                       backgroundColor: 'var(--primary-100)',
                       color: 'var(--primary-700)',
@@ -171,11 +165,11 @@ export default function MyAppointmentsPage() {
                   >
                     #{appt.queue_number || '-'}
                   </div>
-                  <div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--slate-400)', fontWeight: 600 }}>
                       REF: {appt.appointment_reference}
                     </div>
-                    <h4 style={{ fontSize: '1.15rem', color: 'var(--slate-900)' }}>
+                    <h4 style={{ fontSize: '1.15rem', color: 'var(--slate-900)', marginBottom: '1px' }}>
                       Dr. {appt.doctor_name}
                     </h4>
                     <div style={{ color: 'var(--primary-700)', fontWeight: 600, fontSize: '0.85rem' }}>
@@ -188,7 +182,7 @@ export default function MyAppointmentsPage() {
                 </div>
 
                 {/* Schedule and Queue Details */}
-                <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+                <div className="patient-appt-details">
                   <div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--slate-500)' }}>Date & Slot</div>
                     <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--slate-900)' }}>
@@ -203,7 +197,7 @@ export default function MyAppointmentsPage() {
                     <div style={{ fontSize: '0.8rem', color: 'var(--slate-500)', marginBottom: '4px' }}>
                       Status & Queue
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                       <Badge status={appt.appointment_status} />
                       {appt.queue_number && (
                         <span
@@ -230,7 +224,7 @@ export default function MyAppointmentsPage() {
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div className="patient-appt-actions">
                   {appt.queue_status !== 'Cancelled' && (
                     <Link to="/patient/queue" className="btn btn-secondary btn-sm">
                       <Clock size={15} />

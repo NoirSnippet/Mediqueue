@@ -605,6 +605,61 @@ button, input, select, textarea {
   box-sizing: border-box;
 }
 
+/* Patient Dashboard & Portal Responsive Components */
+.patient-live-queue-banner {
+  background: linear-gradient(135deg, #0369a1, #0d9488);
+  color: white;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.patient-next-appt-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background-color: var(--slate-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  margin-bottom: 18px;
+  gap: 16px;
+}
+
+.patient-appt-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.patient-appt-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px 24px;
+}
+
+.patient-appt-doc-info {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-width: 260px;
+}
+
+.patient-appt-details {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
 .admin-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -1925,6 +1980,92 @@ button, input, select, textarea {
   .dashboard-header-actions .btn {
     width: 100%;
     justify-content: center;
+  }
+
+  /* Patient Portal Mobile Refinements */
+  .patient-live-queue-banner {
+    padding: 16px 14px !important;
+    gap: 14px !important;
+    border-radius: var(--radius-lg) !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .patient-live-queue-banner > div:first-child {
+    gap: 12px !important;
+  }
+
+  .patient-live-queue-banner .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .patient-next-appt-box {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    padding: 14px 12px !important;
+  }
+
+  .patient-next-appt-box .next-appt-meta {
+    text-align: left !important;
+    border-top: 1px dashed var(--slate-200);
+    padding-top: 12px;
+  }
+
+  .patient-appt-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .patient-appt-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .patient-appt-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 16px 12px !important;
+    gap: 14px !important;
+  }
+
+  .patient-appt-doc-info {
+    min-width: 0 !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  .patient-appt-details {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+    background-color: var(--slate-50);
+    padding: 12px !important;
+    border-radius: var(--radius-md) !important;
+    border: 1px solid var(--slate-200);
+  }
+
+  .queue-token-card {
+    padding: 20px 14px !important;
+    border-radius: var(--radius-lg) !important;
+  }
+
+  .queue-token-number {
+    font-size: 3rem !important;
+    margin: 8px 0 !important;
+  }
+
+  .slot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .slot-btn {
+    padding: 8px 4px !important;
+    font-size: 0.8rem !important;
   }
 }
 

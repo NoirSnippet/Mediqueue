@@ -152,7 +152,7 @@ export default function CurrentBookingsPage() {
                   Logged in as <strong>{user?.name}</strong>
                 </p>
               </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <Link to="/patient/queue" className="btn btn-secondary btn-sm">
                   <Clock size={14} />
                   <span>Live Queue Status</span>
