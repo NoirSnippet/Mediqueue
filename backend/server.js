@@ -37,6 +37,16 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+// Root info route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'MediQueue Backend API is active and running!',
+    health: '/api/health',
+    version: '1.0.0',
+  });
+});
+
 // System Health Check Endpoint
 app.get('/api/health', (req, res) => {
   res.json({
