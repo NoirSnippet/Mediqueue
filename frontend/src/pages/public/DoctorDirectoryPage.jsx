@@ -193,7 +193,7 @@ export default function DoctorDirectoryPage() {
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '26px' }}>
+          <div className="doctor-directory-grid">
             {doctors.map((doc) => (
               <div key={doc.id} className="doctor-card">
                 {/* Doctor Head: Photo Avatar + Info */}

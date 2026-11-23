@@ -141,14 +141,7 @@ export default function PatientDashboard() {
       )}
 
       {/* Summary Stat Cards */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '20px',
-          marginBottom: '32px',
-        }}
-      >
+      <div className="patient-stats-grid">
         <StatCard
           title="Total Appointments"
           value={stats?.totalAppointments || 0}
@@ -170,7 +163,7 @@ export default function PatientDashboard() {
       </div>
 
       {/* Next Appointment Card */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+      <div className="patient-dashboard-grid">
         <div className="card">
           <div className="card-header">
             <h3 className="card-title">

@@ -111,7 +111,7 @@ export default function QueueStatusPage() {
           </div>
 
           {/* Real-Time Live Counters */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '28px' }}>
+          <div className="doctor-live-hero-grid" style={{ marginBottom: '28px' }}>
             {/* Currently Serving Box */}
             <div className="card" style={{ textAlign: 'center', padding: '24px' }}>
               <div style={{ fontSize: '0.85rem', color: 'var(--slate-500)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px' }}>
@@ -155,7 +155,7 @@ export default function QueueStatusPage() {
               </h3>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.925rem' }}>
+            <div className="register-form-grid" style={{ gap: '16px', fontSize: '0.925rem' }}>
               <div>
                 <span style={{ color: 'var(--slate-500)', display: 'block', fontSize: '0.8rem' }}>Doctor Name</span>
                 <strong style={{ color: 'var(--slate-900)' }}>Dr. {queueData.doctor_name}</strong>

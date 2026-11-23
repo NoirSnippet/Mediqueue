@@ -103,7 +103,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '20px' }}>
             <div className="step-card">
               <div className="step-number">1</div>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '6px' }}>Select Doctor</h3>
@@ -148,7 +148,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '22px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '22px' }}>
               {doctors.map((doc) => {
                 const ratingInfo = DOCTOR_RATINGS[doc.id] || { rating: '4.0', reviews: 10 };
                 return (

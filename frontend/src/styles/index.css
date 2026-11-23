@@ -612,6 +612,32 @@ button, input, select, textarea {
   margin-bottom: 32px;
 }
 
+.doctor-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.patient-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.patient-dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.doctor-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 24px;
+}
+
 .admin-actions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -651,19 +677,30 @@ button, input, select, textarea {
 
 /* Stat Cards */
 .stat-card {
-  display: flex;
-  align-items: center;
-  gap: 18px;
   background-color: #ffffff;
   border: 1px solid var(--slate-200);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: 18px 20px;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  min-width: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .stat-icon {
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -678,18 +715,25 @@ button, input, select, textarea {
 .stat-icon.red { background-color: var(--danger-bg); color: var(--danger-solid); }
 
 .stat-value {
-  font-size: 1.75rem;
+  font-size: 1.85rem;
   font-weight: 800;
   color: var(--slate-900);
   font-family: var(--font-heading);
-  line-height: 1.1;
+  line-height: 1;
+}
+
+.stat-content {
+  width: 100%;
+  min-width: 0;
 }
 
 .stat-label {
-  font-size: 0.875rem;
-  color: var(--slate-500);
-  font-weight: 500;
-  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--slate-600);
+  font-weight: 600;
+  line-height: 1.35;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 /* Badges */
@@ -1712,6 +1756,35 @@ button, input, select, textarea {
   }
 
   /* Dashboard Adjustments on Mobile */
+  .stat-card {
+    padding: 12px 10px !important;
+    gap: 8px !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .stat-icon {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  .stat-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .stat-value {
+    font-size: 1.45rem !important;
+    line-height: 1 !important;
+  }
+
+  .stat-label {
+    font-size: 0.75rem !important;
+    line-height: 1.25 !important;
+    color: var(--slate-600) !important;
+    margin-top: 2px !important;
+  }
+
   .doctor-live-hero-grid {
     grid-template-columns: 1fr !important;
     padding: 16px !important;
@@ -1719,15 +1792,60 @@ button, input, select, textarea {
   }
 
   .admin-stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
-    gap: 12px !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
     margin-bottom: 20px !important;
+  }
+
+  /* 5th stat card spans both columns on mobile for perfect 2x2+1 balance */
+  .admin-stats-grid > :nth-child(5):last-child {
+    grid-column: span 2 !important;
+  }
+
+  .admin-stats-grid > :nth-child(5):last-child .stat-card-top {
+    justify-content: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .doctor-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .patient-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .patient-stats-grid > :nth-child(3):last-child {
+    grid-column: span 2 !important;
+  }
+
+  .patient-stats-grid > :nth-child(3):last-child .stat-card-top {
+    justify-content: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .patient-dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .doctor-directory-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
 
   .admin-actions-grid {
     grid-template-columns: 1fr !important;
     gap: 14px !important;
     margin-bottom: 24px !important;
+  }
+
+  .dashboard-main {
+    padding: 16px 10px !important;
   }
 
   .dashboard-header-actions {
@@ -1747,5 +1865,10 @@ button, input, select, textarea {
 @media (max-width: 420px) {
   .demo-login-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  .sidebar-item a {
+    padding: 6px 10px !important;
+    font-size: 0.775rem !important;
   }
 }

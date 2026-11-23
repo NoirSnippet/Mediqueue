@@ -172,7 +172,7 @@ export default function ContactPage() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
             gap: '30px',
             alignItems: 'flex-start',
           }}
@@ -211,7 +211,7 @@ export default function ContactPage() {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
+              <div className="register-form-grid" style={{ gap: '14px', marginBottom: '16px' }}>
                 <div className="form-group">
                   <label className="form-label" htmlFor="contact-email">
                     Email Address *

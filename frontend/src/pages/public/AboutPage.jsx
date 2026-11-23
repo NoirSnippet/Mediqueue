@@ -54,7 +54,7 @@ export default function AboutPage() {
             <Clock size={22} color="var(--teal-600)" />
             How The Queue Engine Operates
           </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '20px' }}>
             <div style={{ backgroundColor: 'var(--slate-50)', padding: '16px', borderRadius: 'var(--radius-md)' }}>
               <div style={{ fontWeight: 700, color: 'var(--slate-900)', marginBottom: '6px' }}>1. Sequential Token Generation</div>
               <p style={{ fontSize: '0.875rem', color: 'var(--slate-600)', lineHeight: 1.6 }}>

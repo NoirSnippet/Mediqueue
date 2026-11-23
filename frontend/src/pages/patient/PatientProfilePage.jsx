@@ -101,7 +101,7 @@ export default function PatientProfilePage() {
             </h3>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="register-form-grid" style={{ gap: '16px' }}>
             {/* Full Name */}
             <div className="form-group">
               <label className="form-label">Full Name *</label>

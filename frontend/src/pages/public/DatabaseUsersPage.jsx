@@ -167,7 +167,7 @@ export default function DatabaseUsersPage() {
         {error && <Alert type="danger" message={error} onClose={() => setError('')} />}
 
         {/* Telemetry Summary Counters */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap: '16px', marginBottom: '24px' }}>
           <div className="card" style={{ padding: '16px 20px', textAlign: 'center' }}>
             <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary-700)' }}>{users.length}</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--slate-500)', fontWeight: 600, textTransform: 'uppercase' }}>

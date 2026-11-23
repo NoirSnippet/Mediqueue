@@ -297,7 +297,7 @@ export default function CurrentBookingsPage() {
 
         {/* 4. If Unauthenticated Guest: Provide Sign-In & Quick Reference Tracker */}
         {!isAuthenticated && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '26px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '26px' }}>
             {/* Left: Sign in Card */}
             <div className="card" style={{ padding: '32px' }}>
               <div

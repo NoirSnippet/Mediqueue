@@ -109,14 +109,7 @@ export default function DoctorDashboard() {
       {actionMessage && <Alert type="info" message={actionMessage} onClose={() => setActionMessage('')} />}
 
       {/* Metric Cards */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-          gap: '20px',
-          marginBottom: '32px',
-        }}
-      >
+      <div className="doctor-stats-grid">
         <StatCard title="Today's Total Patients" value={summary.total} icon={Users} color="blue" />
         <StatCard title="Waiting in Line" value={summary.waiting} icon={Clock} color="amber" />
         <StatCard title="Currently Serving" value={summary.inConsultation} icon={Activity} color="teal" />
