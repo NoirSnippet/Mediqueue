@@ -1228,23 +1228,7 @@ button, input, select, textarea {
   margin-bottom: 16px;
 }
 
-.footer-tech-stack {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.775rem;
-  color: var(--slate-500);
-  font-weight: 600;
-  background-color: var(--slate-50);
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--slate-200);
-  width: fit-content;
-}
 
-.footer-tech-stack .dot {
-  color: var(--slate-300);
-}
 
 .footer-col {
   display: flex;
@@ -1854,12 +1838,16 @@ button, input, select, textarea {
     padding: 12px 10px !important;
     gap: 8px !important;
     border-radius: var(--radius-md) !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
   .stat-icon {
     width: 34px !important;
     height: 34px !important;
     border-radius: var(--radius-sm) !important;
+    flex-shrink: 0 !important;
   }
 
   .stat-icon svg {
@@ -1872,11 +1860,33 @@ button, input, select, textarea {
     line-height: 1 !important;
   }
 
+  .stat-content {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
   .stat-label {
-    font-size: 0.75rem !important;
+    font-size: clamp(0.68rem, 2.3vw, 0.76rem) !important;
     line-height: 1.25 !important;
     color: var(--slate-600) !important;
     margin-top: 2px !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+  }
+
+  .medical-plus-background {
+    opacity: 0.22 !important;
+  }
+
+  .sidebar-item {
+    flex-shrink: 0 !important;
+  }
+
+  .sidebar-item a {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
 
   .doctor-live-hero-grid {
@@ -1891,14 +1901,16 @@ button, input, select, textarea {
     margin-bottom: 20px !important;
   }
 
-  /* 5th stat card spans both columns on mobile for perfect 2x2+1 balance */
-  .admin-stats-grid > :nth-child(5):last-child {
+  /* 5th stat card (or any lone odd card at end) spans both columns on mobile for perfect 2x2+1 balance */
+  .admin-stats-grid > :nth-child(5),
+  .admin-stats-grid > :last-child:nth-child(odd) {
     grid-column: span 2 !important;
   }
 
-  .admin-stats-grid > :nth-child(5):last-child .stat-card-top {
+  .admin-stats-grid > :nth-child(5) .stat-card-top,
+  .admin-stats-grid > :last-child:nth-child(odd) .stat-card-top {
     justify-content: flex-start !important;
-    gap: 12px !important;
+    gap: 14px !important;
   }
 
   .doctor-stats-grid {
@@ -2098,5 +2110,51 @@ button, input, select, textarea {
   .sidebar-item a {
     padding: 6px 10px !important;
     font-size: 0.775rem !important;
+  }
+
+  .dashboard-main {
+    padding: 14px 8px !important;
+  }
+
+  .admin-stats-grid {
+    gap: 8px !important;
+  }
+
+  .stat-card {
+    padding: 10px 8px !important;
+  }
+
+  .stat-value {
+    font-size: 1.35rem !important;
+  }
+}
+
+/* Ultra-compact screens (<= 350px, e.g. 320px foldables / DevTools) */
+@media (max-width: 350px) {
+  .admin-stats-grid {
+    gap: 6px !important;
+  }
+
+  .stat-card {
+    padding: 8px 6px !important;
+  }
+
+  .stat-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .stat-icon svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .stat-value {
+    font-size: 1.25rem !important;
+  }
+
+  .stat-label {
+    font-size: 0.65rem !important;
+    line-height: 1.2 !important;
   }
 }

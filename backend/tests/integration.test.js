@@ -176,6 +176,17 @@ async function run() {
     await runGroupContact();
   }
 
+  if (targetGroup === 'lookup' || targetGroup === 'all') {
+    console.log('\nTesting reference lookup routes...');
+    const notFoundRes = await simulateRequest({
+      method: 'GET',
+      url: '/api/appointments/lookup/MQ-NONEXISTENT-CODE',
+    });
+    assert.strictEqual(notFoundRes.statusCode, 404);
+    assert.strictEqual(notFoundRes.body.success, false);
+    console.log('  PASS: GET /api/appointments/lookup returns 404 for unknown code without auth required');
+  }
+
   console.log('\nIntegration tests completed successfully!\n');
 
   try {

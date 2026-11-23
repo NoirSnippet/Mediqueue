@@ -75,7 +75,7 @@ export default function AdminDashboard() {
         <StatCard title="Active Doctors" value={stats?.totalDoctors || 0} icon={Stethoscope} color="teal" />
         <StatCard title="Total Appointments" value={stats?.totalAppointments || 0} icon={Calendar} color="green" />
         <StatCard title="Today's Appointments" value={stats?.todayAppointments || 0} icon={Clock} color="amber" />
-        <StatCard title="Today's Waiting Queue" value={stats?.waitingAppointments || 0} icon={Activity} color="amber" />
+        <StatCard title="Waiting Queue" value={stats?.waitingAppointments || 0} icon={Activity} color="amber" />
       </div>
 
       {/* Quick Administration Actions */}

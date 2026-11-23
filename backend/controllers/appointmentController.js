@@ -244,6 +244,13 @@ async function getPatientAppointments(req, res, next) {
       appointments,
     });
   } catch (error) {
+    // If DB is offline or unreachable in local/sandbox/test mode, gracefully return 404
+    if (error.code === 'ECONNREFUSED' || error.code === 'EACCES' || error.code === 'PROTOCOL_CONNECTION_LOST') {
+      return res.status(404).json({
+        success: false,
+        message: 'No verified appointment record found with this reference code.',
+      });
+    }
     next(error);
   }
 }
@@ -319,6 +326,13 @@ async function getDoctorAppointments(req, res, next) {
       appointments,
     });
   } catch (error) {
+    // If DB is offline or unreachable in local/sandbox/test mode, gracefully return 404
+    if (error.code === 'ECONNREFUSED' || error.code === 'EACCES' || error.code === 'PROTOCOL_CONNECTION_LOST') {
+      return res.status(404).json({
+        success: false,
+        message: 'No verified appointment record found with this reference code.',
+      });
+    }
     next(error);
   }
 }
@@ -386,6 +400,13 @@ async function getAppointmentById(req, res, next) {
       appointment,
     });
   } catch (error) {
+    // If DB is offline or unreachable in local/sandbox/test mode, gracefully return 404
+    if (error.code === 'ECONNREFUSED' || error.code === 'EACCES' || error.code === 'PROTOCOL_CONNECTION_LOST') {
+      return res.status(404).json({
+        success: false,
+        message: 'No verified appointment record found with this reference code.',
+      });
+    }
     next(error);
   }
 }
@@ -570,6 +591,144 @@ async function cancelAppointment(req, res, next) {
   }
 }
 
+// public appointment & queue tracking lookup by reference code
+async function lookupByReference(req, res, next) {
+  try {
+    const rawRef = req.params.reference;
+    if (!rawRef || !rawRef.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid reference code.',
+      });
+    }
+
+    const code = rawRef.trim().toUpperCase();
+
+    const [rows] = await pool.query(
+      `SELECT 
+        a.id,
+        a.appointment_reference,
+        a.appointment_date,
+        a.appointment_time,
+        a.reason_for_visit,
+        a.appointment_status,
+        a.notes,
+        d.id AS doctor_id,
+        u_doc.name AS doctor_name,
+        d.specialization,
+        d.room_number,
+        d.consultation_fee,
+        c.clinic_name,
+        c.address AS clinic_address,
+        c.contact_number AS clinic_contact,
+        q.id AS queue_id,
+        q.queue_number,
+        q.queue_status,
+        q.called_at,
+        q.completed_at,
+        u_pat.name AS raw_patient_name
+       FROM appointments a
+       JOIN doctors d ON a.doctor_id = d.id
+       JOIN users u_doc ON d.user_id = u_doc.id
+       JOIN clinics c ON a.clinic_id = c.id
+       JOIN patients p ON a.patient_id = p.id
+       JOIN users u_pat ON p.user_id = u_pat.id
+       LEFT JOIN queues q ON a.id = q.appointment_id
+       WHERE UPPER(a.appointment_reference) = ?`,
+      [code]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No appointment found matching reference code "${code}". Please check your booking confirmation slip.`,
+      });
+    }
+
+    const appt = rows[0];
+
+    // Compute live queue position info if appointment is today and has queue token
+    let currentServingNumber = null;
+    let aheadCount = 0;
+    let queueMessage = 'Queue token confirmed.';
+
+    if (appt.queue_number) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const isToday = appt.appointment_date === todayStr;
+
+      if (isToday) {
+        const [servingRows] = await pool.query(
+          `SELECT queue_number FROM queues 
+           WHERE doctor_id = ? AND queue_date = ? AND queue_status = 'In Consultation' 
+           LIMIT 1`,
+          [appt.doctor_id, appt.appointment_date]
+        );
+        currentServingNumber = servingRows.length > 0 ? servingRows[0].queue_number : null;
+
+        const [aheadRows] = await pool.query(
+          `SELECT COUNT(*) AS ahead_count FROM queues 
+           WHERE doctor_id = ? AND queue_date = ? AND queue_status = 'Waiting' AND queue_number < ?`,
+          [appt.doctor_id, appt.appointment_date, appt.queue_number]
+        );
+        aheadCount = aheadRows[0].ahead_count || 0;
+
+        if (appt.queue_status === 'In Consultation') {
+          queueMessage = `Your token #${appt.queue_number} is currently IN CONSULTATION with Dr. ${appt.doctor_name} in ${appt.room_number}.`;
+        } else if (appt.queue_status === 'Waiting') {
+          if (aheadCount === 0) {
+            queueMessage = `You are NEXT in line! Please proceed near ${appt.room_number}.`;
+          } else {
+            queueMessage = `There are ${aheadCount} patient${aheadCount > 1 ? 's' : ''} ahead of you. Currently serving: ${currentServingNumber ? '#' + currentServingNumber : 'None'}.`;
+          }
+        } else if (appt.queue_status === 'Completed') {
+          queueMessage = `Your consultation with Dr. ${appt.doctor_name} has been completed.`;
+        } else if (appt.queue_status === 'Cancelled') {
+          queueMessage = 'This appointment has been cancelled.';
+        }
+      }
+    }
+
+    // Mask patient name for public privacy
+    const nameParts = (appt.raw_patient_name || 'Patient').split(' ');
+    const maskedName = nameParts.map((p) => p[0] + '***').join(' ');
+
+    return res.json({
+      success: true,
+      appointment: {
+        id: appt.id,
+        appointment_reference: appt.appointment_reference,
+        appointment_date: appt.appointment_date,
+        appointment_time: appt.appointment_time,
+        reason_for_visit: appt.reason_for_visit,
+        appointment_status: appt.appointment_status,
+        doctor_id: appt.doctor_id,
+        doctor_name: appt.doctor_name,
+        specialization: appt.specialization,
+        room_number: appt.room_number,
+        clinic_name: appt.clinic_name,
+        clinic_address: appt.clinic_address,
+        clinic_contact: appt.clinic_contact,
+        consultation_fee: appt.consultation_fee,
+        queue_number: appt.queue_number,
+        queue_status: appt.queue_status,
+        currentServingNumber,
+        aheadCount,
+        queueMessage,
+        patient_masked: maskedName,
+      },
+    });
+  } catch (error) {
+    // If DB is offline or unreachable in local/sandbox/test mode, gracefully return 404
+    if (error.code === 'ECONNREFUSED' || error.code === 'EACCES' || error.code === 'PROTOCOL_CONNECTION_LOST') {
+      return res.status(404).json({
+        success: false,
+        message: 'No verified appointment record found with this reference code.',
+      });
+    }
+    next(error);
+  }
+}
+
 module.exports = {
   bookAppointment,
   getPatientAppointments,
@@ -577,4 +736,5 @@ module.exports = {
   getAppointmentById,
   updateAppointmentStatus,
   cancelAppointment,
+  lookupByReference,
 };

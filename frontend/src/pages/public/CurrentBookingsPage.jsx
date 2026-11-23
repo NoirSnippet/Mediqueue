@@ -15,6 +15,9 @@ import {
   Search,
   AlertCircle,
   Tag,
+  Phone,
+  RotateCcw,
+  Sparkles,
 } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
@@ -26,6 +29,7 @@ export default function CurrentBookingsPage() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refSearch, setRefSearch] = useState('');
+  const [tracking, setTracking] = useState(false);
   const [searchResult, setSearchResult] = useState(null);
   const [searchError, setSearchError] = useState('');
 
@@ -49,8 +53,8 @@ export default function CurrentBookingsPage() {
     }
   }, [isAuthenticated, role]);
 
-  // Demo lookup for unauthenticated visitors by reference code
-  const handleRefLookup = (e) => {
+  // Real Database lookup by reference code
+  const handleRefLookup = async (e) => {
     e.preventDefault();
     setSearchError('');
     setSearchResult(null);
@@ -61,55 +65,212 @@ export default function CurrentBookingsPage() {
       return;
     }
 
-    // Demo matching for pre-seeded appointments
-    const demoBookings = [
-      {
-        ref: 'MQ-DEMO-001',
-        doctor: 'Dr. Sarah Jenkins',
-        spec: 'Cardiology',
-        room: 'Room 101',
-        date: 'Today',
-        time: '09:00 AM',
-        queue: 1,
-        status: 'In Consultation',
-      },
-      {
-        ref: 'MQ-DEMO-002',
-        doctor: 'Dr. Sarah Jenkins',
-        spec: 'Cardiology',
-        room: 'Room 101',
-        date: 'Today',
-        time: '09:30 AM',
-        queue: 2,
-        status: 'Waiting',
-      },
-      {
-        ref: 'MQ-DEMO-004',
-        doctor: 'Dr. Rajesh Sharma',
-        spec: 'General Medicine',
-        room: 'Room 102',
-        date: 'Today',
-        time: '10:00 AM',
-        queue: 1,
-        status: 'Waiting',
-      },
-    ];
-
-    const match = demoBookings.find((b) => b.ref === code);
-    if (match) {
-      setSearchResult(match);
-    } else {
+    setTracking(true);
+    try {
+      const res = await api.get(`/appointments/lookup/${encodeURIComponent(code)}`);
+      if (res.data.success) {
+        setSearchResult(res.data.appointment);
+      }
+    } catch (err) {
       setSearchError(
-        `No public record found for "${code}". Please log in to your patient account to view and manage all private bookings.`
+        err.response?.data?.message || `No appointment found matching reference code "${code}". Please check your booking code.`
       );
+    } finally {
+      setTracking(false);
     }
   };
 
+  const renderLookupCard = () => (
+    <div className="card" style={{ padding: '28px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+        <div
+          style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '12px',
+            backgroundColor: 'var(--teal-100)',
+            color: 'var(--teal-700)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <Search size={20} />
+        </div>
+        <div>
+          <h2 style={{ fontSize: '1.25rem', color: 'var(--slate-900)', margin: 0 }}>
+            Reference Code Lookup
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: 'var(--slate-500)', margin: '2px 0 0' }}>
+            Instant database verification & live queue status tracker
+          </p>
+        </div>
+      </div>
+
+      <p style={{ fontSize: '0.9rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '16px' }}>
+        Have an appointment slip or confirmation code? Enter your reference code to view live room location and queue token status:
+      </p>
+
+      <form onSubmit={handleRefLookup} style={{ marginBottom: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+            <Search
+              size={17}
+              color="var(--slate-400)"
+              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }}
+            />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="e.g. MQ-DEMO-001"
+              value={refSearch}
+              onChange={(e) => setRefSearch(e.target.value)}
+              style={{ paddingLeft: '38px', fontFamily: 'monospace', textTransform: 'uppercase', fontWeight: 600 }}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" style={{ padding: '0 20px', flexShrink: 0 }} disabled={tracking}>
+            {tracking ? 'Searching...' : 'Track Slip'}
+          </button>
+        </div>
+      </form>
+
+      {searchError && (
+        <div
+          style={{
+            fontSize: '0.875rem',
+            color: 'var(--danger-solid)',
+            backgroundColor: '#fef2f2',
+            padding: '10px 14px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid #fecaca',
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <AlertCircle size={16} style={{ flexShrink: 0 }} />
+          <span>{searchError}</span>
+        </div>
+      )}
+
+      {searchResult && (
+        <div
+          style={{
+            backgroundColor: '#f8fafc',
+            border: '1px solid var(--slate-200)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '18px 20px',
+            marginTop: '12px',
+          }}
+        >
+          {/* Header Strip */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--slate-200)', paddingBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--slate-500)', textTransform: 'uppercase', fontWeight: 700 }}>
+                Reference Code
+              </span>
+              <span style={{ fontFamily: 'monospace', fontWeight: 800, color: 'var(--primary-800)', fontSize: '1.05rem', backgroundColor: 'var(--primary-50)', padding: '2px 8px', borderRadius: '4px' }}>
+                {searchResult.appointment_reference}
+              </span>
+            </div>
+            <Badge status={searchResult.appointment_status} />
+          </div>
+
+          {/* Doctor & Clinic */}
+          <div style={{ marginBottom: '14px' }}>
+            <h3 style={{ fontSize: '1.15rem', color: 'var(--slate-900)', marginBottom: '3px' }}>
+              Dr. {searchResult.doctor_name}
+            </h3>
+            <div style={{ color: 'var(--primary-700)', fontWeight: 600, fontSize: '0.875rem' }}>
+              {searchResult.specialization}
+            </div>
+            <div style={{ fontSize: '0.825rem', color: 'var(--slate-500)', marginTop: '2px' }}>
+              {searchResult.clinic_name} • <strong>{searchResult.room_number}</strong>
+            </div>
+          </div>
+
+          {/* Date, Slot & Token Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+              gap: '10px',
+              backgroundColor: 'white',
+              padding: '12px 14px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--slate-200)',
+              marginBottom: '14px',
+              fontSize: '0.85rem',
+            }}
+          >
+            <div>
+              <span style={{ color: 'var(--slate-500)', display: 'block', fontSize: '0.75rem' }}>Consultation Date</span>
+              <strong style={{ color: 'var(--slate-800)' }}>{searchResult.appointment_date}</strong>
+            </div>
+            <div>
+              <span style={{ color: 'var(--slate-500)', display: 'block', fontSize: '0.75rem' }}>Reserved Slot</span>
+              <strong style={{ color: 'var(--slate-800)' }}>{searchResult.appointment_time}</strong>
+            </div>
+            {searchResult.queue_number && (
+              <div>
+                <span style={{ color: 'var(--slate-500)', display: 'block', fontSize: '0.75rem' }}>Queue Token</span>
+                <strong style={{ color: 'var(--teal-700)', fontSize: '1.05rem' }}>#{searchResult.queue_number}</strong>
+              </div>
+            )}
+          </div>
+
+          {/* Live Queue Notice Banner */}
+          {searchResult.queueMessage && (
+            <div
+              style={{
+                backgroundColor: 'var(--primary-50)',
+                border: '1px solid var(--primary-100)',
+                borderRadius: 'var(--radius-md)',
+                padding: '10px 14px',
+                fontSize: '0.825rem',
+                color: 'var(--primary-900)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '14px',
+              }}
+            >
+              <Clock size={16} color="var(--primary-600)" style={{ flexShrink: 0 }} />
+              <span>{searchResult.queueMessage}</span>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <Link to="/patient/queue" className="btn btn-primary btn-sm">
+              <Clock size={14} />
+              Open Live Queue Tracker
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchResult(null);
+                setRefSearch('');
+              }}
+              className="btn btn-secondary btn-sm"
+            >
+              <RotateCcw size={13} />
+              Clear Search
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
-    <div style={{ padding: '48px 0 72px' }}>
-      <div className="container" style={{ maxWidth: '1000px' }}>
+    <div style={{ padding: '40px 0 72px' }}>
+      <div className="container" style={{ maxWidth: '1040px' }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '38px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
           <div
             style={{
               display: 'inline-flex',
@@ -127,7 +288,7 @@ export default function CurrentBookingsPage() {
             <CalendarCheck size={14} />
             <span>Consultation Schedule & Active Tokens</span>
           </div>
-          <h1 style={{ fontSize: '2.3rem', marginBottom: '10px', color: 'var(--slate-900)' }}>Current Bookings</h1>
+          <h1 style={{ fontSize: '2.4rem', marginBottom: '10px', color: 'var(--slate-900)' }}>Current Bookings</h1>
           <p style={{ color: 'var(--slate-600)', fontSize: '1.05rem', maxWidth: '640px', margin: '0 auto', lineHeight: 1.6 }}>
             Track your verified OPD appointments, assigned consultation rooms, and live sequential queue token numbers.
           </p>
@@ -135,7 +296,7 @@ export default function CurrentBookingsPage() {
 
         {/* 1. If Patient is Authenticated: Show their actual bookings */}
         {isAuthenticated && role === 'patient' && (
-          <div>
+          <div style={{ marginBottom: '36px' }}>
             <div
               style={{
                 display: 'flex',
@@ -184,15 +345,7 @@ export default function CurrentBookingsPage() {
                 {appointments.map((appt) => (
                   <div
                     key={appt.id}
-                    className="card"
-                    style={{
-                      padding: '20px 24px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: '16px',
-                    }}
+                    className="card patient-appt-card"
                   >
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
@@ -213,7 +366,7 @@ export default function CurrentBookingsPage() {
                         <Badge status={appt.appointment_status} />
                       </div>
                       <h3 style={{ fontSize: '1.15rem', color: 'var(--slate-900)', marginBottom: '4px' }}>
-                        {appt.doctor_name}
+                        Dr. {appt.doctor_name}
                       </h3>
                       <div style={{ fontSize: '0.875rem', color: 'var(--slate-600)', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                         <span>
@@ -260,7 +413,7 @@ export default function CurrentBookingsPage() {
 
         {/* 2. If Doctor is Authenticated */}
         {isAuthenticated && role === 'doctor' && (
-          <div className="card" style={{ padding: '32px', textAlign: 'center' }}>
+          <div className="card" style={{ padding: '32px', textAlign: 'center', marginBottom: '36px' }}>
             <Stethoscope size={44} color="var(--primary-600)" style={{ margin: '0 auto 14px' }} />
             <h2 style={{ fontSize: '1.4rem', marginBottom: '8px', color: 'var(--slate-900)' }}>
               Doctor Consultations Cockpit
@@ -281,7 +434,7 @@ export default function CurrentBookingsPage() {
 
         {/* 3. If Admin is Authenticated */}
         {isAuthenticated && role === 'admin' && (
-          <div className="card" style={{ padding: '32px', textAlign: 'center' }}>
+          <div className="card" style={{ padding: '32px', textAlign: 'center', marginBottom: '36px' }}>
             <CalendarCheck size={44} color="var(--primary-600)" style={{ margin: '0 auto 14px' }} />
             <h2 style={{ fontSize: '1.4rem', marginBottom: '8px', color: 'var(--slate-900)' }}>
               Clinic-Wide Booking Management
@@ -295,15 +448,15 @@ export default function CurrentBookingsPage() {
           </div>
         )}
 
-        {/* 4. If Unauthenticated Guest: Provide Sign-In & Quick Reference Tracker */}
+        {/* 4. Guest View: Sign In Box + Reference Code Lookup Side-by-Side */}
         {!isAuthenticated && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '26px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '26px' }}>
             {/* Left: Sign in Card */}
-            <div className="card" style={{ padding: '32px' }}>
+            <div className="card" style={{ padding: '28px' }}>
               <div
                 style={{
-                  width: '44px',
-                  height: '44px',
+                  width: '42px',
+                  height: '42px',
                   borderRadius: '12px',
                   backgroundColor: 'var(--primary-100)',
                   color: 'var(--primary-700)',
@@ -313,13 +466,13 @@ export default function CurrentBookingsPage() {
                   marginBottom: '16px',
                 }}
               >
-                <LogIn size={22} />
+                <LogIn size={20} />
               </div>
-              <h2 style={{ fontSize: '1.35rem', marginBottom: '8px', color: 'var(--slate-900)' }}>
+              <h2 style={{ fontSize: '1.25rem', marginBottom: '8px', color: 'var(--slate-900)' }}>
                 Access Your Bookings
               </h2>
-              <p style={{ fontSize: '0.925rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '24px' }}>
-                Sign in to your registered patient account to view all past and upcoming consultation bookings, monitor queue progress in real-time, or reschedule.
+              <p style={{ fontSize: '0.9rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '22px' }}>
+                Sign in to your registered patient account to view all past and upcoming consultation bookings, monitor queue progress in real-time, or cancel if needed.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -343,84 +496,14 @@ export default function CurrentBookingsPage() {
             </div>
 
             {/* Right: Quick Reference Number Lookup */}
-            <div className="card" style={{ padding: '32px' }}>
-              <div
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '12px',
-                  backgroundColor: 'var(--teal-100)',
-                  color: 'var(--teal-700)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: '16px',
-                }}
-              >
-                <Search size={22} />
-              </div>
-              <h2 style={{ fontSize: '1.35rem', marginBottom: '8px', color: 'var(--slate-900)' }}>
-                Reference Code Lookup
-              </h2>
-              <p style={{ fontSize: '0.925rem', color: 'var(--slate-600)', lineHeight: 1.6, marginBottom: '18px' }}>
-                Have an appointment slip? Enter your reference code (e.g. <code>MQ-DEMO-001</code>) to quickly verify booking details:
-              </p>
+            {renderLookupCard()}
+          </div>
+        )}
 
-              <form onSubmit={handleRefLookup} style={{ marginBottom: '16px' }}>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="e.g. MQ-DEMO-001"
-                    value={refSearch}
-                    onChange={(e) => setRefSearch(e.target.value)}
-                    style={{ fontFamily: 'monospace', textTransform: 'uppercase' }}
-                  />
-                  <button type="submit" className="btn btn-primary" style={{ padding: '0 18px', flexShrink: 0 }}>
-                    Track
-                  </button>
-                </div>
-              </form>
-
-              {searchError && (
-                <div style={{ fontSize: '0.85rem', color: '#dc2626', marginBottom: '12px' }}>{searchError}</div>
-              )}
-
-              {searchResult && (
-                <div
-                  style={{
-                    backgroundColor: 'var(--teal-50)',
-                    border: '1px solid var(--teal-200)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '14px 16px',
-                    fontSize: '0.875rem',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <span style={{ fontWeight: 700, color: 'var(--teal-900)' }}>{searchResult.ref}</span>
-                    <Badge status={searchResult.status} />
-                  </div>
-                  <div style={{ color: 'var(--slate-700)', marginBottom: '4px' }}>
-                    <strong>Doctor:</strong> {searchResult.doctor} ({searchResult.spec})
-                  </div>
-                  <div style={{ color: 'var(--slate-600)', display: 'flex', gap: '12px' }}>
-                    <span>
-                      <strong>Slot:</strong> {searchResult.time}
-                    </span>
-                    <span>
-                      <strong>Queue:</strong> #{searchResult.queue}
-                    </span>
-                    <span>
-                      <strong>Room:</strong> {searchResult.room}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              <div style={{ fontSize: '0.78rem', color: 'var(--slate-500)', marginTop: '16px' }}>
-                Tip: Try <code>MQ-DEMO-001</code> or <code>MQ-DEMO-002</code> to test lookup.
-              </div>
-            </div>
+        {/* 5. For Authenticated Users: Reference Code Lookup Card at bottom */}
+        {isAuthenticated && (
+          <div style={{ marginTop: '12px' }}>
+            {renderLookupCard()}
           </div>
         )}
       </div>

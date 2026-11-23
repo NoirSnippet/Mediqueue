@@ -4,7 +4,10 @@ const appointmentController = require('../controllers/appointmentController');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 const { validateAppointmentBooking } = require('../middleware/validationMiddleware');
 
-// All appointment routes require authentication
+// Public route: Reference Code verification & live tracking (no login required)
+router.get('/lookup/:reference', appointmentController.lookupByReference);
+
+// All subsequent appointment routes require authentication
 router.use(authenticateToken);
 
 // POST /api/appointments - Patient books appointment
