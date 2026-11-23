@@ -342,9 +342,169 @@ async function updateQueueStatus(req, res, next) {
   }
 }
 
+// simulate a walk-in patient registration for live demonstration
+async function simulateWalkInPatient(req, res, next) {
+  const connection = await pool.getConnection();
+  try {
+    let doctorId = req.user.role === 'doctor' ? req.user.doctor_id : req.body.doctor_id;
+    const queueDate = req.body.date || getTodayStr();
+
+    if (!doctorId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Doctor ID is required.',
+      });
+    }
+
+    await connection.beginTransaction();
+
+    // Pick a demo patient
+    const [patients] = await connection.query(
+      'SELECT p.id, u.name, u.phone FROM patients p JOIN users u ON p.user_id = u.id ORDER BY RAND() LIMIT 1'
+    );
+    const patient = patients.length > 0 ? patients[0] : { id: 1, name: 'Walk-In Patient', phone: '+91-9888800001' };
+
+    // Get doctor clinic details
+    const [docRows] = await connection.query('SELECT clinic_id FROM doctors WHERE id = ?', [doctorId]);
+    const clinicId = docRows.length > 0 ? docRows[0].clinic_id : 1;
+
+    // Get next queue token number
+    const [queueSeq] = await connection.query(
+      `SELECT COALESCE(MAX(queue_number), 0) + 1 AS next_queue 
+       FROM queues 
+       WHERE doctor_id = ? AND queue_date = ? 
+       FOR UPDATE`,
+      [doctorId, queueDate]
+    );
+    const nextQueueNumber = queueSeq[0].next_queue;
+
+    const ref = `MQ-WALK-${Date.now().toString(36).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`;
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+
+    // Insert appointment record
+    const [apptRes] = await connection.query(
+      `INSERT INTO appointments (appointment_reference, patient_id, doctor_id, clinic_id, appointment_date, appointment_time, reason_for_visit, appointment_status)
+       VALUES (?, ?, ?, ?, ?, ?, 'OPD Walk-in Consultation', 'Waiting')`,
+      [ref, patient.id, doctorId, clinicId, queueDate, timeStr]
+    );
+
+    // Insert queue token record
+    await connection.query(
+      `INSERT INTO queues (appointment_id, doctor_id, queue_date, queue_number, queue_status)
+       VALUES (?, ?, ?, ?, 'Waiting')`,
+      [apptRes.insertId, doctorId, queueDate, nextQueueNumber]
+    );
+
+    await connection.commit();
+
+    return res.status(201).json({
+      success: true,
+      message: `Walk-in token #${nextQueueNumber} generated for ${patient.name} on ${queueDate}.`,
+      queueNumber: nextQueueNumber,
+      patientName: patient.name,
+    });
+  } catch (error) {
+    await connection.rollback();
+    next(error);
+  } finally {
+    connection.release();
+  }
+}
+
+// reset and prime demo queue with active tokens for evaluation
+async function resetDemoQueue(req, res, next) {
+  const connection = await pool.getConnection();
+  try {
+    let doctorId = req.user.role === 'doctor' ? req.user.doctor_id : req.body.doctor_id;
+    const queueDate = req.body.date || getTodayStr();
+
+    if (!doctorId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Doctor ID is required.',
+      });
+    }
+
+    await connection.beginTransaction();
+
+    const [existing] = await connection.query(
+      `SELECT q.id, q.appointment_id, q.queue_number FROM queues q 
+       WHERE q.doctor_id = ? AND q.queue_date = ? 
+       ORDER BY q.queue_number ASC`,
+      [doctorId, queueDate]
+    );
+
+    if (existing.length >= 2) {
+      // Set #1 to In Consultation, remaining to Waiting
+      await connection.query(
+        `UPDATE queues SET queue_status = 'In Consultation', called_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        [existing[0].id]
+      );
+      await connection.query(
+        `UPDATE appointments SET appointment_status = 'In Consultation' WHERE id = ?`,
+        [existing[0].appointment_id]
+      );
+
+      for (let i = 1; i < existing.length; i++) {
+        await connection.query(
+          `UPDATE queues SET queue_status = 'Waiting', called_at = NULL, completed_at = NULL WHERE id = ?`,
+          [existing[i].id]
+        );
+        await connection.query(
+          `UPDATE appointments SET appointment_status = 'Waiting' WHERE id = ?`,
+          [existing[i].appointment_id]
+        );
+      }
+    } else {
+      // Seed 3 demo appointments and queue tokens
+      const [patients] = await connection.query(
+        'SELECT p.id, u.name FROM patients p JOIN users u ON p.user_id = u.id LIMIT 3'
+      );
+      const [docRows] = await connection.query('SELECT clinic_id FROM doctors WHERE id = ?', [doctorId]);
+      const clinicId = docRows.length > 0 ? docRows[0].clinic_id : 1;
+
+      const reasons = ['Routine Health Checkup', 'Persistent Cough & Fever', 'Blood Pressure Follow-up'];
+      const times = ['09:30:00', '10:00:00', '10:30:00'];
+
+      for (let i = 0; i < patients.length; i++) {
+        const ref = `MQ-DEMO-${Date.now().toString(36).toUpperCase()}-${i + 1}`;
+        const queueNum = i + 1;
+        const status = i === 0 ? 'In Consultation' : 'Waiting';
+
+        const [apptRes] = await connection.query(
+          `INSERT INTO appointments (appointment_reference, patient_id, doctor_id, clinic_id, appointment_date, appointment_time, reason_for_visit, appointment_status)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [ref, patients[i].id, doctorId, clinicId, queueDate, times[i], reasons[i], status]
+        );
+
+        await connection.query(
+          `INSERT INTO queues (appointment_id, doctor_id, queue_date, queue_number, queue_status, called_at)
+           VALUES (?, ?, ?, ?, ?, ${i === 0 ? 'CURRENT_TIMESTAMP' : 'NULL'})`,
+          [apptRes.insertId, doctorId, queueDate, queueNum, status]
+        );
+      }
+    }
+
+    await connection.commit();
+
+    return res.json({
+      success: true,
+      message: `Demo queue successfully primed with active consultation & waiting tokens for ${queueDate}!`,
+    });
+  } catch (error) {
+    await connection.rollback();
+    next(error);
+  } finally {
+    connection.release();
+  }
+}
+
 module.exports = {
   getPatientQueueStatus,
   getDoctorLiveQueue,
   callNextPatient,
   updateQueueStatus,
+  simulateWalkInPatient,
+  resetDemoQueue,
 };

@@ -100,7 +100,7 @@ export default function DoctorDashboard() {
           </Link>
           <Link to="/doctor/queue" className="btn btn-teal btn-sm">
             <Activity size={16} />
-            Full Queue Cockpit
+            Live Queue Cockpit
           </Link>
         </div>
       </div>

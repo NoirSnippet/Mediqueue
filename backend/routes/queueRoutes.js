@@ -18,4 +18,10 @@ router.post('/doctor/call-next', authorizeRoles('doctor', 'admin'), queueControl
 // PATCH /api/queue/:id/status - Doctor or Admin manually updates queue token status
 router.patch('/:id/status', authorizeRoles('doctor', 'admin'), queueController.updateQueueStatus);
 
+// POST /api/queue/doctor/simulate-walkin - Simulate walk-in patient token for demo
+router.post('/doctor/simulate-walkin', authorizeRoles('doctor', 'admin'), queueController.simulateWalkInPatient);
+
+// POST /api/queue/doctor/reset-demo - Prime demo queue with active tokens for evaluation
+router.post('/doctor/reset-demo', authorizeRoles('doctor', 'admin'), queueController.resetDemoQueue);
+
 module.exports = router;

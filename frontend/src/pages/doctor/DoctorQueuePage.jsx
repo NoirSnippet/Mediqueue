@@ -8,9 +8,12 @@ import {
   RefreshCw,
   Clock,
   User,
+  Users,
   AlertCircle,
   Check,
   Calendar,
+  UserPlus,
+  RotateCcw,
 } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Alert from '../../components/common/Alert';
@@ -22,10 +25,12 @@ export default function DoctorQueuePage() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   };
+
   const [selectedDate, setSelectedDate] = useState(getTodayStr());
   const [queueData, setQueueData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -73,6 +78,40 @@ export default function DoctorQueuePage() {
     }
   };
 
+  const handleSimulateWalkIn = async () => {
+    setDemoLoading(true);
+    setMessage('');
+    setError('');
+    try {
+      const res = await api.post('/queue/doctor/simulate-walkin', { date: selectedDate });
+      if (res.data.success) {
+        setMessage(res.data.message);
+        loadQueue();
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to register walk-in patient.');
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
+  const handleResetDemo = async () => {
+    setDemoLoading(true);
+    setMessage('');
+    setError('');
+    try {
+      const res = await api.post('/queue/doctor/reset-demo', { date: selectedDate });
+      if (res.data.success) {
+        setMessage(res.data.message);
+        loadQueue();
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to reset demo queue.');
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
   const openStatusModal = (item) => {
     setActiveQueueItem(item);
     setNewStatus(item.queue_status === 'In Consultation' ? 'Completed' : 'In Consultation');
@@ -105,6 +144,7 @@ export default function DoctorQueuePage() {
   const nextWaiting = queueData?.nextWaiting;
   const summary = queueData?.summary || { total: 0, waiting: 0, inConsultation: 0, completed: 0, cancelled: 0 };
   const queueList = queueData?.queueList || [];
+  const isToday = selectedDate === getTodayStr();
 
   return (
     <div>
@@ -113,24 +153,44 @@ export default function DoctorQueuePage() {
         <div>
           <h1 style={{ fontSize: '1.85rem', marginBottom: '4px' }}>Live OPD Queue Cockpit</h1>
           <p style={{ color: 'var(--slate-500)', fontSize: '0.95rem' }}>
-            Real-time consultation controls, patient calling engine, and queue status transitions.
+            Real-time consultation desk, digital token advancement, and live room call controls.
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Calendar size={18} color="var(--slate-500)" />
             <input
               type="date"
               className="form-control"
-              style={{ width: '160px', padding: '6px 10px', fontSize: '0.875rem' }}
+              style={{ width: '150px', padding: '6px 10px', fontSize: '0.875rem' }}
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
 
-          <button onClick={loadQueue} className="btn btn-secondary btn-sm" title="Refresh Queue Data">
-            <RefreshCw size={16} />
+          <button onClick={loadQueue} className="btn btn-secondary btn-sm" title="Refresh Queue Data" disabled={loading}>
+            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+          </button>
+
+          <button
+            onClick={handleSimulateWalkIn}
+            className="btn btn-teal btn-sm"
+            title="Register a simulated walk-in patient token for live testing"
+            disabled={demoLoading}
+          >
+            <UserPlus size={15} />
+            + Walk-In Demo
+          </button>
+
+          <button
+            onClick={handleResetDemo}
+            className="btn btn-secondary btn-sm"
+            title="Reset queue tokens to In Consultation & Waiting for evaluation"
+            disabled={demoLoading}
+          >
+            <RotateCcw size={14} />
+            Reset Demo
           </button>
         </div>
       </div>
@@ -139,84 +199,16 @@ export default function DoctorQueuePage() {
       {error && <Alert type="danger" message={error} onClose={() => setError('')} />}
 
       {/* Main Cockpit Split: Currently Serving vs Next In Line */}
-      <div className="doctor-live-hero-grid" style={{ marginBottom: '32px' }}>
+      <div className="doctor-live-hero-grid" style={{ marginBottom: '24px' }}>
         {/* Active Consultation Box */}
         <div
-          className="card"
           style={{
+            backgroundColor: '#ffffff',
+            borderRadius: 'var(--radius-lg)',
+            padding: '20px',
+            border: '1px solid var(--slate-200)',
             borderLeft: currentServing ? '4px solid var(--primary-600)' : '4px solid var(--slate-300)',
-            backgroundColor: '#ffffff',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <h3 style={{ fontSize: '1.1rem', color: 'var(--slate-800)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Activity size={18} color="var(--primary-600)" />
-              Currently Serving
-            </h3>
-            <Badge status={currentServing ? 'In Consultation' : 'Completed'} text={currentServing ? 'IN PROGRESS' : 'VACANT'} />
-          </div>
-
-          {currentServing ? (
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-                <div
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: 'var(--radius-lg)',
-                    backgroundColor: 'var(--primary-600)',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.5rem',
-                    fontWeight: 800,
-                  }}
-                >
-                  #{currentServing.queue_number}
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '1.3rem', color: 'var(--slate-900)' }}>{currentServing.patient_name}</h4>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--slate-500)' }}>
-                    Phone: {currentServing.patient_phone} • Slot: {currentServing.appointment_time}
-                  </div>
-                  {currentServing.called_at && (
-                    <small style={{ color: 'var(--primary-700)', fontSize: '0.75rem' }}>
-                      Called at: {new Date(currentServing.called_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </small>
-                  )}
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: 'var(--slate-50)', padding: '12px', borderRadius: 'var(--radius-md)', marginBottom: '16px', fontSize: '0.875rem' }}>
-                <div><strong>Reason:</strong> {currentServing.reason_for_visit}</div>
-                {currentServing.notes && <div style={{ marginTop: '4px' }}><strong>Notes:</strong> {currentServing.notes}</div>}
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  onClick={() => openStatusModal(currentServing)}
-                  className="btn btn-teal"
-                  style={{ flex: 1 }}
-                >
-                  <Check size={16} />
-                  Mark Completed
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '36px 0', color: 'var(--slate-400)' }}>
-              No patient is currently in consultation. Click "Call Next Patient" to start.
-            </div>
-          )}
-        </div>
-
-        {/* Next Waiting Patient Box */}
-        <div
-          className="card"
-          style={{
-            borderLeft: nextWaiting ? '4px solid var(--warning-solid)' : '4px solid var(--slate-300)',
-            backgroundColor: '#ffffff',
+            boxShadow: 'var(--shadow-sm)',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -224,12 +216,95 @@ export default function DoctorQueuePage() {
         >
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--slate-800)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ fontSize: '1.05rem', color: 'var(--slate-800)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Activity size={18} color="var(--primary-600)" />
+                Currently Serving (In Room)
+              </h3>
+              <Badge status={currentServing ? 'In Consultation' : 'Completed'} text={currentServing ? 'IN ROOM' : 'VACANT'} />
+            </div>
+
+            {currentServing ? (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                  <div
+                    style={{
+                      width: '54px',
+                      height: '54px',
+                      borderRadius: 'var(--radius-lg)',
+                      backgroundColor: 'var(--primary-600)',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.4rem',
+                      fontWeight: 800,
+                      flexShrink: 0,
+                    }}
+                  >
+                    #{currentServing.queue_number}
+                  </div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <h4 style={{ fontSize: '1.25rem', color: 'var(--slate-900)', marginBottom: '2px' }}>{currentServing.patient_name}</h4>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--slate-500)' }}>
+                      Phone: {currentServing.patient_phone} • Slot: {currentServing.appointment_time}
+                    </div>
+                    {currentServing.called_at && (
+                      <small style={{ color: 'var(--primary-700)', fontSize: '0.75rem', fontWeight: 600 }}>
+                        Called at: {new Date(currentServing.called_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </small>
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: 'var(--slate-50)', padding: '12px', borderRadius: 'var(--radius-md)', marginBottom: '16px', fontSize: '0.875rem' }}>
+                  <div><strong>Reason:</strong> {currentServing.reason_for_visit}</div>
+                  {currentServing.notes && <div style={{ marginTop: '4px' }}><strong>Notes:</strong> {currentServing.notes}</div>}
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '32px 12px', color: 'var(--slate-500)', fontSize: '0.9rem' }}>
+                <Clock size={32} color="var(--slate-300)" style={{ margin: '0 auto 10px' }} />
+                Consultation room is currently vacant. Click <strong>"Call Next Patient"</strong> or use <strong>"+ Walk-In Demo"</strong> above.
+              </div>
+            )}
+          </div>
+
+          {currentServing && (
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={() => openStatusModal(currentServing)}
+                className="btn btn-teal"
+                style={{ width: '100%' }}
+              >
+                <Check size={16} />
+                Mark Completed
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Next Waiting Patient Box */}
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            borderRadius: 'var(--radius-lg)',
+            padding: '20px',
+            border: '1px solid var(--slate-200)',
+            borderLeft: nextWaiting ? '4px solid var(--warning-solid)' : '4px solid var(--slate-300)',
+            boxShadow: 'var(--shadow-sm)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <h3 style={{ fontSize: '1.05rem', color: 'var(--slate-800)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Clock size={18} color="var(--warning-solid)" />
-                Next Eligible Patient
+                Next Eligible Patient (In Lobby)
               </h3>
               <span style={{ fontSize: '0.8rem', color: 'var(--slate-500)', fontWeight: 600 }}>
-                {summary.waiting} in waiting line
+                {summary.waiting} waiting in line
               </span>
             </div>
 
@@ -238,22 +313,23 @@ export default function DoctorQueuePage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                   <div
                     style={{
-                      width: '60px',
-                      height: '60px',
+                      width: '54px',
+                      height: '54px',
                       borderRadius: 'var(--radius-lg)',
                       backgroundColor: 'var(--warning-solid)',
                       color: 'white',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '1.5rem',
+                      fontSize: '1.4rem',
                       fontWeight: 800,
+                      flexShrink: 0,
                     }}
                   >
                     #{nextWaiting.queue_number}
                   </div>
-                  <div>
-                    <h4 style={{ fontSize: '1.3rem', color: 'var(--slate-900)' }}>{nextWaiting.patient_name}</h4>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <h4 style={{ fontSize: '1.25rem', color: 'var(--slate-900)', marginBottom: '2px' }}>{nextWaiting.patient_name}</h4>
                     <div style={{ fontSize: '0.85rem', color: 'var(--slate-500)' }}>
                       Phone: {nextWaiting.patient_phone} • Slot: {nextWaiting.appointment_time}
                     </div>
@@ -264,8 +340,9 @@ export default function DoctorQueuePage() {
                 </div>
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '36px 0', color: 'var(--slate-400)' }}>
-                No more waiting patients for this date.
+              <div style={{ textAlign: 'center', padding: '32px 12px', color: 'var(--slate-500)', fontSize: '0.9rem' }}>
+                <User size={32} color="var(--slate-300)" style={{ margin: '0 auto 10px' }} />
+                No more waiting patients for this date. Click <strong>"+ Walk-In Demo"</strong> to add a patient.
               </div>
             )}
           </div>
@@ -277,20 +354,20 @@ export default function DoctorQueuePage() {
             disabled={actionLoading || !nextWaiting}
           >
             <PhoneCall size={18} />
-            {actionLoading ? 'Calling...' : nextWaiting ? `Call Queue #${nextWaiting.queue_number}` : 'Queue Empty'}
+            {actionLoading ? 'Calling...' : nextWaiting ? `Call Queue #${nextWaiting.queue_number} into Room` : 'Queue Empty'}
           </button>
         </div>
       </div>
 
       {/* Full Queue Roster for Selected Date */}
       <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">
+        <div className="card-header" style={{ flexWrap: 'wrap', gap: '12px' }}>
+          <h3 className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Users size={20} color="var(--primary-600)" />
             Queue Roster ({queueList.length} total)
           </h3>
 
-          <div style={{ display: 'flex', gap: '12px', fontSize: '0.8rem', fontWeight: 600 }}>
+          <div style={{ display: 'flex', gap: '12px', fontSize: '0.8rem', fontWeight: 600, flexWrap: 'wrap' }}>
             <span style={{ color: 'var(--warning-solid)' }}>Waiting: {summary.waiting}</span>
             <span style={{ color: 'var(--primary-700)' }}>In Consultation: {summary.inConsultation}</span>
             <span style={{ color: 'var(--success-solid)' }}>Completed: {summary.completed}</span>
@@ -301,54 +378,79 @@ export default function DoctorQueuePage() {
         {loading ? (
           <LoadingSpinner message="Loading queue records..." />
         ) : queueList.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--slate-400)', padding: '30px' }}>
-            No queue tokens recorded for {selectedDate}.
-          </p>
-        ) : (
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Queue #</th>
-                  <th>Slot</th>
-                  <th>Patient Name</th>
-                  <th>Contact</th>
-                  <th>Reason</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {queueList.map((item) => (
-                  <tr key={item.queue_id}>
-                    <td>
-                      <strong style={{ color: 'var(--primary-700)', fontSize: '1rem' }}>
-                        #{item.queue_number}
-                      </strong>
-                    </td>
-                    <td>{item.appointment_time}</td>
-                    <td>
-                      <strong>{item.patient_name}</strong>
-                    </td>
-                    <td>{item.patient_phone}</td>
-                    <td>{item.reason_for_visit}</td>
-                    <td>
-                      <Badge status={item.queue_status} />
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => openStatusModal(item)}
-                        className="btn btn-secondary btn-sm"
-                        disabled={item.queue_status === 'Cancelled'}
-                      >
-                        Update Status
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ textAlign: 'center', padding: '44px 20px', color: 'var(--slate-500)' }}>
+            <Calendar size={40} color="var(--slate-300)" style={{ margin: '0 auto 12px' }} />
+            <h4 style={{ color: 'var(--slate-800)', marginBottom: '6px' }}>No Queue Tokens for {selectedDate}</h4>
+            <p style={{ fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto 16px', color: 'var(--slate-500)' }}>
+              No appointments or walk-in patient tokens have been registered for this doctor on this day.
+            </p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {!isToday && (
+                <button onClick={() => setSelectedDate(getTodayStr())} className="btn btn-secondary btn-sm">
+                  <Calendar size={15} />
+                  Switch to Today
+                </button>
+              )}
+              <button onClick={handleSimulateWalkIn} className="btn btn-primary btn-sm" disabled={demoLoading}>
+                <UserPlus size={15} />
+                + Add Demo Walk-In Patient
+              </button>
+              <button onClick={handleResetDemo} className="btn btn-secondary btn-sm" disabled={demoLoading}>
+                <RotateCcw size={15} />
+                Prime Demo Queue
+              </button>
+            </div>
           </div>
+        ) : (
+          <>
+            <div className="mobile-table-hint">
+              👉 Swipe table horizontally to view all queue columns
+            </div>
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Queue #</th>
+                    <th>Slot</th>
+                    <th>Patient Name</th>
+                    <th>Contact</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {queueList.map((item) => (
+                    <tr key={item.queue_id}>
+                      <td>
+                        <strong style={{ color: 'var(--primary-700)', fontSize: '1rem' }}>
+                          #{item.queue_number}
+                        </strong>
+                      </td>
+                      <td>{item.appointment_time}</td>
+                      <td>
+                        <strong>{item.patient_name}</strong>
+                      </td>
+                      <td>{item.patient_phone}</td>
+                      <td>{item.reason_for_visit}</td>
+                      <td>
+                        <Badge status={item.queue_status} />
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => openStatusModal(item)}
+                          className="btn btn-secondary btn-sm"
+                          disabled={item.queue_status === 'Cancelled'}
+                        >
+                          Update Status
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 
