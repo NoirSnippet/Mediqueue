@@ -660,6 +660,15 @@ button, input, select, textarea {
   align-items: center;
 }
 
+/* About Page Responsive CTA Actions */
+.about-cta-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .admin-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -2066,6 +2075,17 @@ button, input, select, textarea {
   .slot-btn {
     padding: 8px 4px !important;
     font-size: 0.8rem !important;
+  }
+
+  .about-cta-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .about-cta-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
   }
 }
 
