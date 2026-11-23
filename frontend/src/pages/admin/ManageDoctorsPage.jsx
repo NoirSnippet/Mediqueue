@@ -247,7 +247,7 @@ export default function ManageDoctorsPage() {
         }
       >
         <form onSubmit={handleCreateSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="register-form-grid" style={{ gap: '16px' }}>
             <div className="form-group">
               <label className="form-label">Doctor Name *</label>
               <input
@@ -382,7 +382,7 @@ export default function ManageDoctorsPage() {
         }
       >
         <form onSubmit={handleEditSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="register-form-grid" style={{ gap: '16px' }}>
             <div className="form-group">
               <label className="form-label">Doctor Name</label>
               <input

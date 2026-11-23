@@ -202,7 +202,14 @@ async function getCurrentUser(req, res, next) {
 
     if (user.role === 'patient') {
       const [patients] = await pool.query('SELECT * FROM patients WHERE user_id = ?', [userId]);
-      if (patients.length > 0) profileData = { patient: patients[0] };
+      if (patients.length > 0) {
+        profileData = {
+          patient_id: patients[0].id,
+          gender: patients[0].gender,
+          blood_group: patients[0].blood_group,
+          patient: patients[0],
+        };
+      }
     } else if (user.role === 'doctor') {
       const [doctors] = await pool.query(
         `SELECT d.*, c.clinic_name, c.address AS clinic_address, c.contact_number AS clinic_contact
@@ -211,7 +218,15 @@ async function getCurrentUser(req, res, next) {
          WHERE d.user_id = ?`,
         [userId]
       );
-      if (doctors.length > 0) profileData = { doctor: doctors[0] };
+      if (doctors.length > 0) {
+        profileData = {
+          doctor_id: doctors[0].id,
+          specialization: doctors[0].specialization,
+          clinic_id: doctors[0].clinic_id,
+          clinic_name: doctors[0].clinic_name,
+          doctor: doctors[0],
+        };
+      }
     }
 
     return res.json({

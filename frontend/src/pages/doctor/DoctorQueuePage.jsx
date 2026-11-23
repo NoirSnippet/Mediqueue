@@ -139,7 +139,7 @@ export default function DoctorQueuePage() {
       {error && <Alert type="danger" message={error} onClose={() => setError('')} />}
 
       {/* Main Cockpit Split: Currently Serving vs Next In Line */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+      <div className="doctor-live-hero-grid" style={{ marginBottom: '32px' }}>
         {/* Active Consultation Box */}
         <div
           className="card"

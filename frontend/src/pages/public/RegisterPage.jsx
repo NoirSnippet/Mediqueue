@@ -68,9 +68,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{ padding: '50px 0 80px' }}>
+    <div className="auth-wrapper">
       <div className="container" style={{ maxWidth: '640px' }}>
-        <div className="card" style={{ padding: '36px', boxShadow: 'var(--shadow-xl)' }}>
+        <div className="card register-card">
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
             <h2 style={{ fontSize: '1.85rem', marginBottom: '6px' }}>Patient Registration</h2>
@@ -82,7 +82,7 @@ export default function RegisterPage() {
           {error && <Alert type="danger" message={error} onClose={() => setError('')} />}
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className="register-form-grid">
               {/* Full Name */}
               <div className="form-group" style={{ gridColumn: 'span 2' }}>
                 <label className="form-label">Full Name *</label>

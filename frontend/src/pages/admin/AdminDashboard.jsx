@@ -17,9 +17,12 @@ import StatCard from '../../components/common/StatCard';
 import Badge from '../../components/common/Badge';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
+import Alert from '../../components/common/Alert';
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function loadStats() {
@@ -30,6 +33,7 @@ export default function AdminDashboard() {
         }
       } catch (err) {
         console.error('Failed to load admin stats:', err);
+        setError(err.response?.data?.message || 'Could not aggregate administrative statistics.');
       } finally {
         setLoading(false);
       }
@@ -51,7 +55,7 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="dashboard-header-actions">
           <Link to="/admin/doctors" className="btn btn-primary btn-sm">
             <PlusCircle size={16} />
             Manage Doctors
@@ -63,15 +67,10 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {error && <Alert type="danger" message={error} onClose={() => setError('')} />}
+
       {/* Summary KPI Metrics */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
-          gap: '18px',
-          marginBottom: '32px',
-        }}
-      >
+      <div className="admin-stats-grid">
         <StatCard title="Registered Patients" value={stats?.totalPatients || 0} icon={Users} color="blue" />
         <StatCard title="Active Doctors" value={stats?.totalDoctors || 0} icon={Stethoscope} color="teal" />
         <StatCard title="Total Appointments" value={stats?.totalAppointments || 0} icon={Calendar} color="green" />
@@ -80,14 +79,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Administration Actions */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '20px',
-          marginBottom: '32px',
-        }}
-      >
+      <div className="admin-actions-grid">
         <div className="card card-hover" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>

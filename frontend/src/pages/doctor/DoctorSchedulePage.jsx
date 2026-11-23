@@ -227,7 +227,7 @@ export default function DoctorSchedulePage() {
             </select>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+          <div className="register-form-grid" style={{ gap: '14px' }}>
             <div className="form-group">
               <label className="form-label">Start Time (HH:MM) *</label>
               <input

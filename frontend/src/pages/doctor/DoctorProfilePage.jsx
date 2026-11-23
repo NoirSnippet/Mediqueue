@@ -134,7 +134,7 @@ export default function DoctorProfilePage() {
           </h3>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', fontSize: '0.925rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', fontSize: '0.925rem' }}>
           <div>
             <span style={{ color: 'var(--slate-500)', fontSize: '0.8rem', display: 'block' }}>Doctor Name</span>
             <strong style={{ fontSize: '1.1rem', color: 'var(--slate-900)' }}>Dr. {profile?.name}</strong>

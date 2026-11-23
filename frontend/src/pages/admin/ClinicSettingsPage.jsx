@@ -95,7 +95,7 @@ export default function ClinicSettingsPage() {
             </h3>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="register-form-grid" style={{ gap: '16px' }}>
             <div className="form-group" style={{ gridColumn: 'span 2' }}>
               <label className="form-label">Clinic Facility Name *</label>
               <input

@@ -47,9 +47,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ padding: '60px 0 80px', display: 'flex', justifyContent: 'center' }}>
+    <div className="auth-wrapper">
       <div className="container" style={{ maxWidth: '480px' }}>
-        <div className="card" style={{ padding: '36px', boxShadow: 'var(--shadow-xl)' }}>
+        <div className="card auth-card">
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
             <div
@@ -140,7 +140,7 @@ export default function LoginPage() {
               <ShieldCheck size={16} color="var(--primary-600)" />
               <span>Project Evaluator Demo Quick Fill</span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <div className="demo-login-grid">
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"

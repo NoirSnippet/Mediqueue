@@ -24,6 +24,7 @@ export default function DoctorDashboard() {
   const [todayAppointments, setTodayAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionMessage, setActionMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [callingNext, setCallingNext] = useState(false);
 
   const now = new Date();
@@ -45,6 +46,7 @@ export default function DoctorDashboard() {
       }
     } catch (err) {
       console.error('Failed to load doctor dashboard:', err);
+      setErrorMessage(err.response?.data?.message || 'Could not load clinical dashboard data.');
     } finally {
       setLoading(false);
     }
@@ -84,14 +86,14 @@ export default function DoctorDashboard() {
       <div className="dashboard-page-header">
         <div>
           <h1 style={{ fontSize: '1.85rem', marginBottom: '4px' }}>
-            Doctor Dashboard — Dr. {user?.name}
+            Doctor Dashboard — {user?.name?.startsWith('Dr.') ? user.name : `Dr. ${user?.name || 'Physician'}`}
           </h1>
           <p style={{ color: 'var(--slate-500)', fontSize: '0.95rem' }}>
             {user?.specialization || 'Specialist'} • {user?.clinic_name || 'Central Clinic'}
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="dashboard-header-actions">
           <Link to="/doctor/schedule" className="btn btn-secondary btn-sm">
             <Calendar size={16} />
             Edit Working Schedule
@@ -103,6 +105,7 @@ export default function DoctorDashboard() {
         </div>
       </div>
 
+      {errorMessage && <Alert type="danger" message={errorMessage} onClose={() => setErrorMessage('')} />}
       {actionMessage && <Alert type="info" message={actionMessage} onClose={() => setActionMessage('')} />}
 
       {/* Metric Cards */}
@@ -121,19 +124,7 @@ export default function DoctorDashboard() {
       </div>
 
       {/* Live Queue Call Next Hero */}
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          borderRadius: 'var(--radius-xl)',
-          border: '1px solid var(--slate-200)',
-          padding: '24px',
-          boxShadow: 'var(--shadow-sm)',
-          marginBottom: '32px',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '24px',
-        }}
-      >
+      <div className="doctor-live-hero-grid">
         {/* Current Serving Box */}
         <div
           style={{
@@ -270,9 +261,18 @@ export default function DoctorDashboard() {
         </div>
 
         {todayAppointments.length === 0 ? (
-          <p style={{ color: 'var(--slate-500)', textAlign: 'center', padding: '30px' }}>
-            No appointments booked for today.
-          </p>
+          <div style={{ color: 'var(--slate-500)', textAlign: 'center', padding: '36px 16px' }}>
+            <p style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--slate-700)', marginBottom: '6px' }}>
+              No appointments booked for today ({todayStr}).
+            </p>
+            <p style={{ fontSize: '0.875rem', marginBottom: '16px', color: 'var(--slate-500)' }}>
+              Check other dates or manage your clinical queue from the appointments console.
+            </p>
+            <Link to="/doctor/appointments" className="btn btn-secondary btn-sm">
+              <Calendar size={15} />
+              <span>View All Consultations</span>
+            </Link>
+          </div>
         ) : (
           <div className="table-responsive">
             <table className="table">
