@@ -1,4 +1,4 @@
--- seed data for initial setup (all demo account passwords: password123)
+-- seed data for initial setup
 
 USE mediqueue_db;
 
@@ -12,21 +12,21 @@ ON DUPLICATE KEY UPDATE clinic_name=VALUES(clinic_name);
 INSERT INTO users (id, name, email, phone, password_hash, role, account_status)
 VALUES
 -- admin
-(1, 'System Administrator', 'admin@mediqueue.com', '+91-9000000001', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'admin', 'active'),
+(1, 'System Administrator', 'admin@mediqueue.com', '+91-9000000001', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'admin', 'active'),
 
 -- doctors
-(2, 'Dr. Sarah Jenkins', 'dr.sarah@mediqueue.com', '+91-9000000002', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'doctor', 'active'),
-(3, 'Dr. Rajesh Sharma', 'dr.rajesh@mediqueue.com', '+91-9000000003', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'doctor', 'active'),
-(4, 'Dr. Priya Patel', 'dr.priya@mediqueue.com', '+91-9000000004', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'doctor', 'active'),
-(5, 'Dr. Arjun Mehta', 'dr.arjun@mediqueue.com', '+91-9000000005', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'doctor', 'active'),
-(6, 'Dr. Ananya Sen', 'dr.ananya@mediqueue.com', '+91-9000000006', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'doctor', 'active'),
+(2, 'Dr. Sarah Jenkins', 'dr.sarah@mediqueue.com', '+91-9000000002', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'doctor', 'active'),
+(3, 'Dr. Rajesh Sharma', 'dr.rajesh@mediqueue.com', '+91-9000000003', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'doctor', 'active'),
+(4, 'Dr. Priya Patel', 'dr.priya@mediqueue.com', '+91-9000000004', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'doctor', 'active'),
+(5, 'Dr. Arjun Mehta', 'dr.arjun@mediqueue.com', '+91-9000000005', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'doctor', 'active'),
+(6, 'Dr. Ananya Sen', 'dr.ananya@mediqueue.com', '+91-9000000006', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'doctor', 'active'),
 
 -- patients
-(7, 'John Doe', 'john.doe@example.com', '+91-9888800001', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'patient', 'active'),
-(8, 'Jane Smith', 'jane.smith@example.com', '+91-9888800002', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'patient', 'active'),
-(9, 'Robert Brown', 'robert.brown@example.com', '+91-9888800003', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'patient', 'active'),
-(10, 'Emily Davis', 'emily.davis@example.com', '+91-9888800004', '$2a$10$aK3I5k62wDZsH2Pg/lZxZe/e0Asnl6RcJDsTg0UByuS32rgSIXJcu', 'patient', 'active'),
-(11, 'Upendra', 'tashansingh57@gmail.com', '+918791640669', '$2a$10$dtb7AIyUkw2XcX8zAwNTaOm1NYrbFveQ/mxh68ulpVjFmEY4T.OCa', 'patient', 'active')
+(7, 'John Doe', 'john.doe@example.com', '+91-9888800001', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'patient', 'active'),
+(8, 'Jane Smith', 'jane.smith@example.com', '+91-9888800002', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'patient', 'active'),
+(9, 'Robert Brown', 'robert.brown@example.com', '+91-9888800003', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'patient', 'active'),
+(10, 'Emily Davis', 'emily.davis@example.com', '+91-9888800004', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'patient', 'active'),
+(11, 'Upendra', 'tashansingh57@gmail.com', '+918791640669', '$2a$10$Yv2fYfrM2Dtf59eaw8U9ceC54UHpGV4GHEVo8am5kUueU0bSd4zi2', 'patient', 'active')
 ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 -- 3. doctor profiles

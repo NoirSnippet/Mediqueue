@@ -185,17 +185,17 @@ Open your browser and navigate to **`http://localhost:5173`**.
 
 ## 5. Pre-Seeded Demonstration Accounts (For BCA Evaluation)
 
-All demonstration accounts use the password: **`password123`**  
-*(The Login page also provides 1-click Quick Autofill buttons for effortless evaluation).*
+All demonstration accounts are protected by a strong, memorable credentials policy.  
+*(The Login page provides 1-click Quick Email Selection buttons for effortless evaluator convenience; passwords are typed manually to maintain authentic security standards).*
 
-| Role | Account Name | Login Email | Password | Details |
+| Role | Account Name | Login Email | Password Mode | Details |
 |---|---|---|---|---|
-| **Administrator** | System Administrator | `admin@mediqueue.com` | `password123` | Full control over doctors, patients, appointments, and clinic settings |
-| **Doctor** | Dr. Sarah Jenkins | `dr.sarah@mediqueue.com` | `password123` | Cardiology Specialist (Room 201) |
-| **Doctor** | Dr. Rajesh Sharma | `dr.rajesh@mediqueue.com` | `password123` | General Medicine Specialist (Room 102) |
-| **Doctor** | Dr. Priya Patel | `dr.priya@mediqueue.com` | `password123` | Pediatrics Specialist (Room 105) |
-| **Patient** | John Doe | `john.doe@example.com` | `password123` | Pre-booked appointment with Queue Token #1 |
-| **Patient** | Jane Smith | `jane.smith@example.com` | `password123` | Pre-booked appointment with Queue Token #2 |
+| **Administrator** | System Administrator | `admin@mediqueue.com` | Enter manually | Full control over doctors, patients, appointments, and clinic settings |
+| **Doctor** | Dr. Sarah Jenkins | `dr.sarah@mediqueue.com` | Enter manually | Cardiology Specialist (Room 201) |
+| **Doctor** | Dr. Rajesh Sharma | `dr.rajesh@mediqueue.com` | Enter manually | General Medicine Specialist (Room 102) |
+| **Doctor** | Dr. Priya Patel | `dr.priya@mediqueue.com` | Enter manually | Pediatrics Specialist (Room 105) |
+| **Patient** | John Doe | `john.doe@example.com` | Enter manually | Pre-booked appointment with Queue Token #1 |
+| **Patient** | Jane Smith | `jane.smith@example.com` | Enter manually | Pre-booked appointment with Queue Token #2 |
 
 ---
 

@@ -152,9 +152,15 @@ async function createDoctor(req, res, next) {
       });
     }
 
-    const defaultPass = password && password.trim() ? password.trim() : 'password123';
+    if (!password || !password.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password is required to create a doctor account.',
+      });
+    }
+
     const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(defaultPass, salt);
+    const passwordHash = await bcrypt.hash(password.trim(), salt);
 
     await connection.beginTransaction();
 

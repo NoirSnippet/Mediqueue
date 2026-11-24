@@ -62,10 +62,10 @@ export default function LoginPage() {
     }
   };
 
-  // Quick autofill helper for BCA examiner
-  const fillCredentials = (demoEmail, demoPass) => {
+  // Quick email selector helper for BCA examiner
+  const selectAccount = (demoEmail) => {
     setEmail(demoEmail);
-    setPassword(demoPass);
+    setPassword('');
     setError('');
     setFieldErrors({});
   };
@@ -140,7 +140,6 @@ export default function LoginPage() {
                 <label className="form-label" style={{ marginBottom: 0 }}>
                   Password <span className="required-star">*</span>
                 </label>
-                <span style={{ fontSize: '0.8rem', color: 'var(--slate-400)' }}>Demo: password123</span>
               </div>
               <div style={{ position: 'relative' }}>
                 <Lock
@@ -193,34 +192,34 @@ export default function LoginPage() {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--slate-500)', textTransform: 'uppercase', marginBottom: '12px' }}>
               <ShieldCheck size={16} color="var(--primary-600)" />
-              <span>Project Evaluator Demo Quick Fill</span>
+              <span>Project Evaluator — Select Account Email</span>
             </div>
             <div className="demo-login-grid">
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
-                onClick={() => fillCredentials('admin@mediqueue.com', 'password123')}
+                onClick={() => selectAccount('admin@mediqueue.com')}
               >
                 Admin
               </button>
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
-                onClick={() => fillCredentials('dr.sarah@mediqueue.com', 'password123')}
+                onClick={() => selectAccount('dr.sarah@mediqueue.com')}
               >
                 Dr. Sarah (Cardio)
               </button>
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
-                onClick={() => fillCredentials('dr.rajesh@mediqueue.com', 'password123')}
+                onClick={() => selectAccount('dr.rajesh@mediqueue.com')}
               >
                 Dr. Rajesh (Medicine)
               </button>
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
-                onClick={() => fillCredentials('john.doe@example.com', 'password123')}
+                onClick={() => selectAccount('john.doe@example.com')}
               >
                 John Doe (Patient)
               </button>

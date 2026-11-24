@@ -19,7 +19,7 @@ export default function ManageDoctorsPage() {
     name: '',
     email: '',
     phone: '',
-    password: 'password123',
+    password: '',
     specialization: 'Cardiology',
     qualification: 'MBBS, MD',
     experience_years: 5,
@@ -80,7 +80,7 @@ export default function ManageDoctorsPage() {
           name: '',
           email: '',
           phone: '',
-          password: 'password123',
+          password: '',
           specialization: 'Cardiology',
           qualification: 'MBBS, MD',
           experience_years: 5,
@@ -297,13 +297,14 @@ export default function ManageDoctorsPage() {
 
             <div className="form-group">
               <label className="form-label">
-                Default Password <span className="required-star">*</span>
+                Account Password <span className="required-star">*</span>
               </label>
               <div style={{ position: 'relative' }}>
                 <input
                   type={showAddDoctorPassword ? 'text' : 'password'}
                   className="form-control"
                   style={{ paddingRight: '40px' }}
+                  placeholder="Enter initial password"
                   value={addForm.password}
                   onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
                   required
